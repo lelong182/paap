@@ -1,0 +1,176 @@
+<div class="service-item">
+  <a [routerLink]="['/provider-details', provider.id]"><img class="avatar" src="{{provider.avatar}}" alt="img"/></a>
+  <div class="service-item-content">
+    <h4 class="name"><a [routerLink]="['/provider-details', provider.id]">{{provider.name}}</a></h4>
+    <div class="service-rating" [innerHTML]="renderRating(provider.rating)"></div>
+    <div class="desc">{{provider.excerpt}}</div>
+    <button class="book-btn" (click)="openBookModal(provider)">ĐẶT XE</button>
+    <button class="remove-btn" *ngIf="isLogin && userData.role === 'Admin'" (click)="removeProvider(provider.id, $event)"><i class="fa fa-trash-o"></i></button>
+    <button class="edit-btn" *ngIf="isLogin && (userData.role === 'Admin' || (userData.role === 'Agent' && userData.email === provider.email))" (click)="editProvider(provider.id)">Sửa</button>
+  </div>
+  <div id="book-{{provider.id}}-modal" class="modal fade book-modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3>Đặt Xe</h3>
+      </div>
+      <div class="modal-content">
+        <ul class="nav nav-tabs book-tabs">
+          <li class="active">
+            <a [attr.href]="steps.step1 ? '#info-details-' + provider.id + '-tab' : null" [attr.data-toggle]="steps.step1 ? 'tab' : null">
+              <span>1</span>
+              Thông tin chi tiết
+            </a>
+          </li>
+          <li [ngClass]="{'disabled': !steps.step2}">
+            <a [attr.href]="steps.step2 ? '#finish-' + provider.id + '-tab' : null" [attr.data-toggle]="steps.step2 ? 'tab' : null">
+              <span>2</span>
+              Hoàn tất
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade in active" id="info-details-{{provider.id}}-tab">
+            <form novalidate #createPaapForm="ngForm" (ngSubmit)="goStep2(provider.id)">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="journey-info">
+                    <div class="row">
+                      <div class="col-sm-3"><h4>Quãng đường*</h4></div>
+                      <div class="col-sm-4 col-xs-6">
+                        <div class="wrap-search-location">
+                          <div class="input-has-icon">
+                            <input #arrivalInput #arrival="ngModel" [(ngModel)]="paapData.departureAddress" name="arrival" class="custom-input arrival-input" (keydown)="onKeydownArrival()" (blur)="onBlurArrival()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm khởi hành" required />
+                            <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+                          </div>
+                        </div>
+                        <div [hidden]="arrival.valid || (arrival.pristine && !createPaapForm.submitted)" class="error-message">
+                          Vui lòng chọn điểm khởi hành
+                        </div>
+                        <div class="error-message blur-message-arrival hidden"></div>
+                      </div>
+                      <div class="col-sm-1 hidden-xs text-center">
+                        <img class="mgt-15" src="assets/images/arrow-icon-2.png" alt="img"/>
+                      </div>
+                      <div class="col-sm-4 col-xs-6">
+                        <div class="wrap-search-location">
+                          <div class="input-has-icon">
+                            <input #departureInput #departure="ngModel" [(ngModel)]="paapData.destinationAddress" name="departure" class="custom-input departure-input" (keydown)="onKeydownDeparture()" (blur)="onBlurDeparture()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm đến" required />
+                            <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+                          </div>
+                        </div>
+                        <div [hidden]="departure.valid || (departure.pristine && !createPaapForm.submitted)" class="error-message">
+                          Vui lòng chọn điểm đến
+                        </div>
+                        <div class="error-message blur-message-departure hidden"></div>
+                      </div>
+                      <div class="col-sm-4 col-sm-offset-3 col-xs-6 mgt-10">
+                        <input [(ngModel)]="paapData.departureName" name="arrivalLabel" class="custom-input" type="text"
+                               placeholder="Mô tả điểm khởi hành (tên bến xe,...)"/>
+                      </div>
+                      <div class="col-sm-4 col-sm-offset-1 col-xs-6 mgt-10">
+                        <input [(ngModel)]="paapData.destinationName" name="departureLabel" class="custom-input"
+                               type="text" placeholder="Mô tả điểm đến (tên bến xe, tên địa điểm,...)"/>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-3"><h4>Ngày/giờ khởi hành*</h4></div>
+                      <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="wrap-date">
+                          <div class="wrap-datepicker">
+                            <datetime [timepicker]="false" [datepicker]="startDateOpts"
+                                      (ngModelChange)="handleDateFromChange($event)" [ngModel]="paapData.startDate"
+                                      [ngModelOptions]="{standalone: true}"></datetime>
+                          </div>
+                        </div>
+                        <div class="wrap-time">
+                          <div class="wrap-datepicker">
+                            <datetime [datepicker]="false" [timepicker]="timeOpts" [(ngModel)]="paapData.startTime"
+                                      [ngModelOptions]="{standalone: true}"></datetime>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-3"><h4>Ngày/giờ đến (dự kiến)</h4></div>
+                      <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="wrap-date">
+                          <div class="wrap-datepicker">
+                            <datetime [timepicker]="false" [datepicker]="endDateOpts" [(ngModel)]="paapData.endDate"
+                                      [ngModelOptions]="{standalone: true}"></datetime>
+                          </div>
+                        </div>
+                        <div class="wrap-time">
+                          <div class="wrap-datepicker">
+                            <datetime [datepicker]="false" [timepicker]="timeOpts" [(ngModel)]="paapData.endTime"
+                                      [ngModelOptions]="{standalone: true}"></datetime>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-3"><h4>Phương tiện*</h4></div>
+                      <div class="col-sm-4">
+                        <div class="wrap-select">
+                          <select2 [data]="listTransport" [width]="'100%'"
+                                   (valueChanged)="select2Changed($event)"></select2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-3"><h4>Mô tả</h4></div>
+                      <div class="col-sm-9">
+                        <textarea class="custom-textarea" placeholder="Nhập mô tả cho chuyến đi" [(ngModel)]="paapData.description" name="description"></textarea>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-3"><h4>Tài xế theo xe</h4></div>
+                      <div class="col-sm-9">
+                        <input [(ngModel)]="bookData.withDriver" name="withDriver" id="withDriver" type="checkbox" [value]="false" />
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.journey-info -->
+                </div>
+                <div class="col-md-4">
+                  <div class="creator">
+                    <div class="info-row">
+                      <div>Họ tên</div>
+                      <div>{{userData?.fullname}}</div>
+                    </div>
+                    <div class="info-row">
+                      <div>Số điện thoại</div>
+                      <div>{{userData?.phone}}</div>
+                    </div>
+                    <div class="info-row">
+                      <div>Email</div>
+                      <div>{{userData?.email}}</div>
+                    </div>
+                    <div class="info-row">
+                      <div>Nhà xe</div>
+                      <div>{{bookData.providerName}}</div>
+                    </div>
+                    <div class="info-row">
+                      <div>Mã giảm giá</div>
+                      <div>
+                        <input [(ngModel)]="bookData.couponCode" name="couponCode" class="custom-input" type="text"/>
+                      </div>
+                    </div>
+                    <button class="next-btn" [disabled]="paapData.departureId === '' || paapData.destinationId === '' || paapData.startDate == null || paapData.startTime == null || paapData.transportId === 0">Tiếp tục</button>
+                  </div>
+                  <!-- /.creator -->
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane fade" id="finish-{{provider.id}}-tab">
+            <div class="wrap-finish">
+              <img class="icon" src="assets/images/big-check-icon.png" alt="img"/>
+              <h4 class="mgt-20 mgb-20">Đặt xe thành công</h4>
+              <h4 class="mgb-20">Vui lòng theo dõi email và trang cá nhân để xem tình trạng của xe đã đặt</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

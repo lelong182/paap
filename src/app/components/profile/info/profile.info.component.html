@@ -1,0 +1,44 @@
+<form class="update-profile" novalidate #updateProfileForm="ngForm">
+  <div class="form-group">
+    <div class="left">
+      <label for="fullname-profile">Họ và tên</label>
+    </div>
+    <div class="right">
+      <input #fullname="ngModel" [(ngModel)]="userData.fullname" name="fullname" id="fullname-profile"
+             class="custom-input" type="text" required />
+      <div [hidden]="fullname.valid || (fullname.pristine && !updateProfileForm.submitted)" class="error-message">Họ và tên không được bỏ trống</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="left">
+      <label for="password-profile">Mật khẩu</label>
+    </div>
+    <div class="right">
+      <input id="password-profile" [(ngModel)]="passwordData.curPassword" name="curPassword" class="custom-input" type="password" />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="left">
+      <label for="new-password-profile">Mật khẩu mới</label>
+    </div>
+    <div class="right">
+      <input id="new-password-profile" #newPassword="ngModel" [(ngModel)]="passwordData.newPassword" name="newPassword" validateEqual="reNewPassword" reverse="true" class="custom-input" type="password" minlength="6" />
+      <div [hidden]="newPassword.valid || (newPassword.pristine && !updateProfileForm.submitted)" class="error-message">Mật khẩu mới tối thiểu 6 ký tự</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="left">
+      <label for="re-password-profile">Nhập lại mật khẩu mới</label>
+    </div>
+    <div class="right">
+      <input id="re-password-profile" #reNewPassword="ngModel" [(ngModel)]="passwordData.reNewPassword" name="reNewPassword" validateEqual="newPassword" class="custom-input" type="password" />
+      <div [hidden]="reNewPassword.valid || (reNewPassword.pristine && !updateProfileForm.submitted)" class="error-message">Nhập lại mật khẩu mới chưa chính xác</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="left"></div>
+    <div class="right">
+      <button class="update-btn" [disabled]="!updateProfileForm.form.valid" (click)="updateProfile($event)">Cập nhật</button>
+    </div>
+  </div>
+</form>

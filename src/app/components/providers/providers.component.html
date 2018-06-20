@@ -1,0 +1,31 @@
+<paap-provider-hero></paap-provider-hero>
+
+<div class="main">
+  <div class="container">
+    <div class="list-services">
+      <div class="service-header">
+        <h3>Dịch vụ được đánh giá cao</h3>
+        <div class="wrap-sort">
+          <h4>Sắp xếp theo:</h4>
+          <ul>
+            <li><a (click)="sortBy('name')">Tên nhà xe</a></li>
+            <li><a (click)="sortBy('rating')">Đánh giá</a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- /.service-header -->
+      <div class="row">
+        <div class="col-md-4 col-sm-6 col-xs-6" *ngFor="let provider of listProviders">
+          <paap-provider-item [provider]="provider"></paap-provider-item>
+          <!-- /.service-item -->
+        </div>
+        <div class="readmore" *ngIf="visibleReadmore">
+          <a (click)="loadProviders(false, $event)">Xem thêm đối tác</a>
+        </div>
+        <!-- /.readmore -->
+      </div>
+    </div>
+    <!-- /.list-services -->
+  </div>
+</div>
+<!-- /.main -->

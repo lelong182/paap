@@ -1,0 +1,359 @@
+<div class="main">
+  <div class="container">
+    <div class="paap-service">
+      <h3>{{isEdit ? 'Sửa' : 'Tạo'}} dịch vụ vận chuyển</h3>
+      <form novalidate #createProviderForm="ngForm">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <div class="left">
+                <h4>Hình ảnh nhà xe <span class="red-label">*</span></h4>
+              </div>
+              <div class="right">
+                <label for="service-avatar-input"></label>
+                <input id="service-avatar-input" ng2FileSelect [uploader]="uploader" (change)="getPreviewImg($event)"
+                       type="file"/>
+                <img *ngIf="previewImg !== ''" class="uploader-review" src="{{previewImg}}" alt="img"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <div class="left">
+                <h4>Tên nhà xe <span class="red-label">*</span></h4>
+              </div>
+              <div class="right">
+                <input #providerName="ngModel" [(ngModel)]="providerData.name" name="providerName" class="custom-input"
+                       type="text" autocomplete="off" placeholder="Nhập tên dịch vụ" required/>
+                <div [hidden]="providerName.valid || (providerName.pristine && !createProviderForm.submitted)"
+                     class="error-message">
+                  Vui lòng nhập tên dịch vụ
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="left">
+                <h4>Số điện thoại <span class="red-label">*</span></h4>
+              </div>
+              <div class="right">
+                <input #providerPhone="ngModel" [(ngModel)]="providerData.phone" name="providerPhone"
+                       class="custom-input" type="text" autocomplete="off" placeholder="Nhập số điện thoại"
+                       pattern="^\(?(\+)?([0-9\s\.\-]{0,3})\)?([0-9\s\.\-]{9,17})$" required/>
+                <div [hidden]="providerPhone.valid || (providerPhone.pristine && !createProviderForm.submitted)"
+                     class="error-message">
+                  <span
+                    *ngIf="providerPhone.errors && providerPhone.errors['required']">Vui lòng nhập số điện thoại</span>
+                  <span *ngIf="providerPhone.errors && providerPhone.errors['pattern']">Số điện thoại không đúng</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="left">
+                <h4>Email <span class="red-label">*</span></h4>
+              </div>
+              <div class="right">
+                <ng-container *ngIf="isEdit">
+                  <h4 class="mgt-12">{{providerData.email}}</h4>
+                </ng-container>
+                <ng-container *ngIf="!isEdit">
+                  <input #providerEmail="ngModel" [(ngModel)]="providerData.email" name="providerEmail"
+                         class="custom-input" type="text" autocomplete="off" placeholder="Nhập email" required email/>
+                  <div [hidden]="providerEmail.valid || (providerEmail.pristine && !createProviderForm.submitted)"
+                       class="error-message">
+                    Vui lòng nhập email
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="left">
+                <h4>Địa chỉ</h4>
+              </div>
+              <div class="right">
+                <input #providerAddress="ngModel" [(ngModel)]="providerData.address" name="providerAddress"
+                       class="custom-input" type="text" placeholder="Nhập địa chỉ"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="userData.role === 'Admin';else notAdmin">
+          <div class="row" *ngIf="isEdit">
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="left">
+                </div>
+                <div class="right">
+                  <button type="button" (click)="resetPassword($event, providerData.email)" class="add-more-btn">Khôi
+                    phục mật khẩu
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #notAdmin>
+          <div class="row" *ngIf="isEdit && !changePassword">
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="left">
+                </div>
+                <div class="right">
+                  <button type="button" (click)="toggleChangePassword()" class="add-more-btn">Đổi mật khẩu</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+        <div class="row" *ngIf="!isEdit || changePassword">
+          <div class="col-md-6">
+            <div class="form-group" *ngIf="isEdit">
+              <div class="left">
+                <h4>Mật khẩu hiện tại <span class="red-label">*</span></h4>
+              </div>
+              <div class="right">
+                <input #providerCurPassword="ngModel" [(ngModel)]="providerData.curPassword" name="providerCurPassword"
+                       class="custom-input" type="password" required/>
+                <div
+                  [hidden]="providerCurPassword.valid || (providerCurPassword.pristine && !createProviderForm.submitted)"
+                  class="error-message">
+                  Vui lòng nhập mật khẩu hiện tại
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="left">
+                <h4>Mật khẩu mới <span class="red-label">*</span></h4>
+              </div>
+              <div class="right">
+                <input #providerPassword="ngModel" [(ngModel)]="providerData.password" name="providerPassword"
+                       validateEqual="providerRePassword" reverse="true" class="custom-input" type="password"
+                       minlength="6" required/>
+                <div [hidden]="providerPassword.valid || (providerPassword.pristine && !createProviderForm.submitted)"
+                     class="error-message">
+                  <span *ngIf="providerPassword.errors && providerPassword.errors['required']">Vui lòng nhập mật khẩu mới</span>
+                  <span *ngIf="providerPassword.errors && providerPassword.errors['minlength']">Mật khẩu tối thiểu 6 ký tự</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="left">
+                <h4>Nhập lại mật khẩu mới <span class="red-label">*</span></h4>
+              </div>
+              <div class="right">
+                <input #providerRePassword="ngModel" [(ngModel)]="providerData.rePassword" name="providerRePassword"
+                       validateEqual="providerPassword" class="custom-input" type="password" required/>
+                <div
+                  [hidden]="providerRePassword.valid || (providerRePassword.pristine && !createProviderForm.submitted)"
+                  class="error-message">
+                  <span
+                    *ngIf="providerRePassword.errors && providerRePassword.errors['required'] && !providerRePassword.errors['validateEqual']">Vui lòng nhập lại mật khẩu mới</span>
+                  <span
+                    *ngIf="providerRePassword.errors && !providerRePassword.errors['required'] && !providerRePassword.errors['validateEqual']">Nhập lại mật khẩu không trùng với mật khẩu</span>
+                </div>
+                <button *ngIf="isEdit" type="button" (click)="toggleChangePassword()" class="back-btn mgt-10">Quay lại
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="left">
+            <h4>Tên công ty</h4>
+          </div>
+          <div class="right">
+            <input class="custom-input" type="text" [(ngModel)]="providerData.companyName" name="providerCompanyName" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="left">
+            <h4>Mã số thuế</h4>
+          </div>
+          <div class="right">
+            <input class="custom-input" type="text" [(ngModel)]="providerData.mst" name="providerMST" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="left">
+            <h4>Giấy phép đăng ký <br />kinh doanh</h4>
+          </div>
+          <div class="right">
+            <div class="right" style="padding-top: 12px; font-size: 15px;">
+              <label for="gpdkkd-input">Upload</label>
+              <input id="gpdkkd-input" ng2FileSelect [uploader]="docsUploader" (change)="uploadDocs($event, 'gpdkkd')" type="file"/>
+              {{providerData.gpdkkd}}
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="left">
+            <h4>Giấy phép vận tải</h4>
+          </div>
+          <div class="right">
+            <div class="right" style="padding-top: 12px; font-size: 15px;">
+              <label for="gpvt-input">Upload</label>
+              <input id="gpvt-input" ng2FileSelect [uploader]="docsUploader" (change)="uploadDocs($event, 'gpvt')" type="file"/>
+              {{providerData.gpvt}}
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="left">
+            <h4>Mô tả ngắn</h4>
+          </div>
+          <div class="right">
+            <textarea class="custom-textarea" [(ngModel)]="providerData.excerpt" name="providerExcerpt"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="left">
+            <h4>Mô tả dịch vụ</h4>
+          </div>
+          <div class="right">
+            <textarea [froalaEditor] height="300" class="custom-textarea" [(ngModel)]="providerData.description"
+                      name="providerDescription"></textarea>
+          </div>
+        </div>
+        <div class="row" *ngFor="let item of providerData.discounts; let i = index;">
+          <div class="col-md-5 col-sm-6 mgb-10-xs">
+            <div class="form-group mgb-0">
+              <div class="left">
+                <h4 *ngIf="i === 0">Mã giảm giá</h4>
+              </div>
+              <div class="right">
+                <input class="custom-input" [(ngModel)]="providerData.discounts[i].code"
+                       name="providerDiscountsCode-{{providerData.discounts[i].rid}}" type="text"
+                       placeholder="Nhập vào mã giảm giá"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-1 col-xs-2 discount-code">
+            <input class="custom-input" [(ngModel)]="providerData.discounts[i].value"
+                   name="providerDiscountsValue-{{providerData.discounts[i].rid}}" type="text" placeholder="%"/>
+          </div>
+          <div class="col-md-4 col-sm-5 col-xs-10">
+            <input class="custom-input" [(ngModel)]="providerData.discounts[i].description"
+                   name="providerDiscountsDescription-{{providerData.discounts[i].rid}}" type="text"
+                   placeholder="Điều kiện giảm giá"/>
+          </div>
+          <div class="pull-left" *ngIf="isEdit">
+            <a class="remove-icon" (click)="removeCouponBlock($event, i)"><i class="fa fa-window-close"></i></a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <div class="left">
+              </div>
+              <div class="right">
+                <button type="button" (click)="addCouponBlock()" class="add-more-btn">THÊM MÃ GIẢM GIÁ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngFor="let item of providerData.transports; let i = index;">
+          <div class="col-md-5 col-sm-7 mgb-10-xs">
+            <div class="form-group mgb-0">
+              <div class="left">
+                <h4 *ngIf="i === 0">Loại phương tiện</h4>
+              </div>
+              <div class="right">
+                <select2 [data]="listTransport" [value]="providerData.transports[i].id" [width]="'100%'"
+                         (valueChanged)="select2Changed(providerData.transports[i], $event)"></select2>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-5 mgb-10-xs">
+            <input class="custom-input" [(ngModel)]="providerData.transports[i].description"
+                   name="providerTransportsDescription-{{providerData.transports[i].rid}}" type="text"
+                   placeholder="Thông tin phương tiện"/>
+          </div>
+          <div class="pull-left" *ngIf="isEdit">
+            <a class="remove-icon" (click)="removeVehicleBlock($event, i)"><i class="fa fa-window-close"></i></a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <div class="left">
+              </div>
+              <div class="right">
+                <button type="button" (click)="addVehicleBlock()" class="add-more-btn">THÊM PHƯƠNG TIỆN</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3 class="mgt-20">Khu vực hoạt động</h3>
+        <div class="wrap-active-area">
+          <div class="row">
+            <div class="col-lg-8 col-md-7 col-sm-6 mgb-15-xs">
+              <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-4 col-lg-offset-3">
+                  <div class="wrap-area-chk" *ngFor="let city1 of listCities | slice:0:25">
+                    <input id="VN-{{city1['id']}}-chk" (change)="updateChecked($event)" [value]="city1['id']"
+                           type="checkbox"/>
+                    <label for="VN-{{city1['id']}}-chk">{{city1['name']}}</label>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-4">
+                  <div class="wrap-area-chk" *ngFor="let city2 of listCities | slice:25:50">
+                    <input id="VN-{{city2['id']}}-chk" (change)="updateChecked($event)" [value]="city2['id']"
+                           type="checkbox"/>
+                    <label for="VN-{{city2['id']}}-chk">{{city2['name']}}</label>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-4">
+                  <div class="wrap-area-chk" *ngFor="let city3 of listCities | slice:50:63">
+                    <input id="VN-{{city3['id']}}-chk" (change)="updateChecked($event)" [value]="city3['id']"
+                           type="checkbox"/>
+                    <label for="VN-{{city3['id']}}-chk">{{city3['name']}}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-5 col-sm-6">
+              <div [inlineSVG]="'/assets/map.svg'"></div>
+            </div>
+          </div>
+        </div>
+        <div class="paap-service-footer">
+          <ng-container *ngIf="isEdit">
+            <button type="submit" class="submit-btn" [disabled]="!createProviderForm.form.valid || previewImg === ''"
+                    (click)="submitProvider($event)">HOÀN TẤT
+            </button>
+          </ng-container>
+          <ng-container *ngIf="!isEdit">
+            <button type="submit" class="submit-btn" [disabled]="!createProviderForm.form.valid || previewImg === ''"
+                    (click)="submitProvider($event)">HOÀN TẤT
+            </button>
+          </ng-container>
+          <button type="button" class="cancel-btn" (click)="backToList()">HỦY</button>
+        </div>
+      </form>
+      <div class="modal fade verify-modal" tabindex="-1" *ngIf="!isEdit">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <img data-dismiss="modal" class="close-icon" src="assets/images/close-icon-3.png" alt="img"/>
+              <h3>Xác nhận số điện thoại</h3>
+            </div>
+            <div class="modal-body">
+              <form novalidate #verifyForm="ngForm">
+                <input #verifyCode="ngModel" [(ngModel)]="providerData.verifyCode" name="verifyCode"
+                       class="custom-input mgb-10" type="text" placeholder="Nhập mã xác nhận*" required/>
+                <div [hidden]="verifyCode.valid || (verifyCode.pristine && !verifyForm.submitted)"
+                     class="error-message">
+                  Vui lòng nhập mã xác nhận
+                </div>
+                <button type="submit" class="submit-btn" [disabled]="!verifyForm.form.valid"
+                        (click)="submitProvider($event)">Xác nhận
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.paap-service -->
+  </div>
+</div>
+<!-- /.main -->

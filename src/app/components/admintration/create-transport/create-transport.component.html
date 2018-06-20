@@ -1,0 +1,54 @@
+<div class="main">
+  <div class="container">
+    <div class="paap-create">
+      <h3>{{caption}}</h3>
+      <form novalidate #transportForm="ngForm">
+        <div class="row">
+          <div class="col-sm-3">
+            <h4>Tên <span class="red-label">*</span>:</h4>
+          </div>
+          <div class="col-sm-4">
+            <input class="custom-input" #transportName="ngModel" [(ngModel)]="transportData.name" name="transportName" />
+            <div [hidden]="transportName.valid || (transportName.pristine && !transportForm.submitted)" class="error-message">
+              Vui lòng nhập tên loại vận chuyển
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <h4>Mô tả:</h4>
+          </div>
+          <div class="col-sm-9">
+            <input class="custom-input" [(ngModel)]="transportData.description" name="transportDescription" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <h4>Loại vận chuyển cha:</h4>
+          </div>
+          <div class="col-sm-4">
+            <div class="wrap-select">
+              <select2 [data]="listParentTransport" [value]="transportData.parent_id.toString()" [width]="'100%'" (valueChanged)="select2ParentIdChanged($event)"></select2>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <h4>Ẩn hiện:</h4>
+          </div>
+          <div class="col-sm-4">
+            <div class="wrap-select">
+              <select2 [data]="listStatus" [value]="transportData.status" [width]="'100%'" (valueChanged)="select2StatusChanged($event)" [options]="select2StatusOptions"></select2>
+            </div>
+          </div>
+        </div>
+        <div class="paap-create-footer">
+          <button type="submit" class="submit-btn" [disabled]="transportData.name === ''" (click)="submitTransport($event)">HOÀN TẤT</button>
+          <button type="button" class="cancel-btn" (click)="cancelCreateTransport()">HỦY</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.paap-create -->
+  </div>
+</div>
+<!-- /.main -->

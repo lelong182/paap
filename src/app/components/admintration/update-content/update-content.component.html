@@ -1,0 +1,31 @@
+<div class="main">
+  <div class="container">
+    <div class="paap-create">
+      <h3>Quản trị</h3>
+      <a [routerLink]="['/administration']" href="" class="btn btn-primary">Loại vận chuyển</a> |
+      <a [routerLink]="['/update-content/about']" href="" class="btn btn-primary">Cập nhật Giới thiệu</a> |
+      <a [routerLink]="['/update-content/terms']" href="" class="btn btn-primary">Cập nhật Điều khoản</a>
+      <hr />
+      <form novalidate #updateContentForm="ngForm">
+        <div class="form-group">
+          <div class="left">
+            <h4>{{caption}}</h4>
+            <br />
+          </div>
+          <div class="right">
+            <textarea [froalaEditor]="editorConfig" height="600" class="custom-textarea" [(ngModel)]="content"
+                      name="providerDescription"></textarea>
+          </div>
+        </div>
+        <div class="paap-create-footer">
+          <button type="submit" class="submit-btn" [disabled]="!updateContentForm.form.valid"
+                  (click)="submitUpdateContent($event)">HOÀN TẤT
+          </button>
+          <button type="button" class="cancel-btn" (click)="backToAdmin()">HỦY</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.paap-create -->
+  </div>
+</div>
+<!-- /.main -->

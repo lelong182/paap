@@ -1,0 +1,95 @@
+<div class="main">
+  <div class="container">
+    <div class="paap-create">
+      <h3>Tạo PAAP mới</h3>
+      <form novalidate #createPaapForm="ngForm">
+        <div class="row">
+          <div class="col-sm-3"><h4>Quãng đường*</h4></div>
+          <div class="col-sm-4 col-xs-6">
+            <div class="wrap-search-location">
+              <div class="input-has-icon">
+                <input #arrivalInput #arrival="ngModel" [(ngModel)]="paapData.departureAddress" name="arrival" class="custom-input arrival-input" (keydown)="onKeydownArrival()" (blur)="onBlurArrival()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm khởi hành" required />
+                <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+              </div>
+            </div>
+            <div [hidden]="arrival.valid || (arrival.pristine && !createPaapForm.submitted)" class="error-message submit-message-arrival">
+              Vui lòng chọn điểm khởi hành
+            </div>
+            <div class="error-message blur-message-arrival hidden"></div>
+          </div>
+          <div class="col-sm-1 hidden-xs text-center">
+            <img class="mgt-15" src="assets/images/arrow-icon-2.png" alt="img" />
+          </div>
+          <div class="col-sm-4 col-xs-6">
+            <div class="wrap-search-location">
+              <div class="input-has-icon">
+                <input #departureInput #departure="ngModel" [(ngModel)]="paapData.destinationAddress" name="departure" class="custom-input departure-input" (keydown)="onKeydownDeparture()" (blur)="onBlurDeparture()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm đến" required />
+                <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+              </div>
+            </div>
+            <div [hidden]="departure.valid || (departure.pristine && !createPaapForm.submitted)" class="error-message submit-message-departure">
+              Vui lòng chọn điểm đến
+            </div>
+            <div class="error-message blur-message-departure hidden"></div>
+          </div>
+          <div class="col-sm-4 col-sm-offset-3 col-xs-6 mgt-10">
+            <input [(ngModel)]="paapData.departureName" name="arrivalLabel" class="custom-input" type="text" placeholder="Mô tả điểm khởi hành (tên bến xe,...)" />
+          </div>
+          <div class="col-sm-4 col-sm-offset-1 col-xs-6 mgt-10">
+            <input [(ngModel)]="paapData.destinationName" name="departureLabel" class="custom-input" type="text" placeholder="Mô tả điểm đến (tên bến xe, tên địa điểm,...)" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><h4>Ngày/giờ khởi hành*</h4></div>
+          <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="wrap-date">
+              <div class="wrap-datepicker">
+                <datetime [timepicker]="false" [datepicker]="startDateOpts" (ngModelChange)="handleDateFromChange($event)" [(ngModel)]="paapData.startDate" [ngModelOptions]="{standalone: true}"></datetime>
+              </div>
+            </div>
+            <div class="wrap-time">
+              <div class="wrap-datepicker">
+                <datetime [datepicker]="false" [timepicker]="timeOpts" [(ngModel)]="paapData.startTime" [ngModelOptions]="{standalone: true}"></datetime>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><h4>Ngày/giờ đến (dự kiến)</h4></div>
+          <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="wrap-date">
+              <div class="wrap-datepicker">
+                <datetime [timepicker]="false" [datepicker]="endDateOpts" [(ngModel)]="paapData.endDate" [ngModelOptions]="{standalone: true}"></datetime>
+              </div>
+            </div>
+            <div class="wrap-time">
+              <div class="wrap-datepicker">
+                <datetime [datepicker]="false" [timepicker]="timeOpts" [(ngModel)]="paapData.endTime" [ngModelOptions]="{standalone: true}"></datetime>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><h4>Phương tiện*</h4></div>
+          <div class="col-sm-4">
+            <div class="wrap-select">
+              <select2 [data]="listTransport" [width]="'100%'" (valueChanged)="select2Changed($event)"></select2>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3"><h4>Mô tả</h4></div>
+          <div class="col-sm-9">
+            <textarea class="custom-textarea" placeholder="Nhập mô tả cho chuyến đi" [(ngModel)]="paapData.description" name="description"></textarea>
+          </div>
+        </div>
+        <div class="paap-create-footer">
+          <button type="submit" class="submit-btn" [disabled]="paapData.departureId === '' || paapData.destinationId === '' || paapData.startDate == null || paapData.startTime == null || paapData.transportId === 0" (click)="createPaap($event)">HOÀN TẤT</button>
+          <button type="button" class="cancel-btn" (click)="cancelCreatePaap()">HỦY</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.paap-create -->
+  </div>
+</div>
+<!-- /.main -->

@@ -1,0 +1,31 @@
+<paap-slogan></paap-slogan>
+
+<paap-hero [isSearchPage]="true"></paap-hero>
+
+<div class="main">
+  <div class="container">
+    <div class="list-paaps">
+      <div class="paap-header">
+        <h3>{{total}} PAAP được tìm thấy{{listPaaps.length ? ': 1 - ' + listPaaps.length : ''}}</h3>
+        <div class="wrap-sort">
+          <h4>Sắp xếp theo:</h4>
+          <ul>
+            <li><a (click)="sortBy('arrival')">Điểm khởi hành</a></li>
+            <li><a (click)="sortBy('departure')">Điểm đến</a></li>
+            <li><a (click)="sortBy('transport')">Loại xe</a></li>
+            <li><a (click)="sortBy('start_date')">Thời gian khởi hành</a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- /.paap-header -->
+      <paap-item class="paap-item" *ngFor="let paap of listPaaps" [paap]="paap"></paap-item>
+      <!-- /.paap-item -->
+      <div class="readmore" *ngIf="visibleReadmore">
+        <a (click)="loadPaaps(false, $event)">Xem thêm (10 PAAP khác)</a>
+      </div>
+      <!-- /.readmore -->
+    </div>
+    <!-- /.list-paaps -->
+  </div>
+</div>
+<!-- /.main -->

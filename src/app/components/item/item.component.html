@@ -1,0 +1,22 @@
+<div class="paap-form">
+  <h4>{{paap.departureAddress}}</h4>
+  <ng-container *ngIf="paap.departureName">
+    <h5>({{paap.departureName}})</h5>
+  </ng-container>
+  <span>{{paap.arrival_datetime | customDate}}</span>
+</div>
+<div class="paap-arrow"><img src="assets/images/arrow-icon.png" alt="img"/></div>
+<div class="paap-to">
+  <h4>{{paap.destinationAddress}}</h4>
+  <ng-container *ngIf="paap.destinationName">
+    <h5>({{paap.destinationName}})</h5>
+  </ng-container>
+  <span>{{paap.departure_datetime | customDate}}</span>
+</div>
+<div class="paap-vehicle">
+  <h4>{{paap.transport_name}}</h4>
+</div>
+<div class="paap-details-link">
+  <a [routerLink]="['/details', paap.id]">Chi tiết</a>
+  <div class="created">{{paap.created_at | customDate}}</div>
+</div>

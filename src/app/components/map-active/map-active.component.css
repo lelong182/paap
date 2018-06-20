@@ -1,0 +1,8 @@
+.map-active .map {
+  height: 810px;
+  width: 385px;
+}
+
+.map-active .map .land.active {
+  fill: #0099cc;
+}

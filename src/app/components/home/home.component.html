@@ -1,0 +1,42 @@
+<paap-slogan></paap-slogan>
+
+<paap-hero></paap-hero>
+
+<div class="main">
+  <div class="container">
+    <div class="clients">
+      <div *ngFor="let provider of listProviders">
+        <div class="img-container">
+          <a title="{{provider.name}}" [routerLink]="['/provider-details', provider.id]">
+            <img src="{{provider.avatar}}" alt="img" />
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- /.clients -->
+    <div class="list-paaps">
+      <div class="paap-header">
+        <h3>PAAP TRONG NGÀY : 1 - {{listPaaps.length}}</h3>
+        <div class="wrap-sort">
+          <h4>Sắp xếp theo:</h4>
+          <ul>
+            <li><a (click)="sortBy('arrival')">Điểm khởi hành</a></li>
+            <li><a (click)="sortBy('departure')">Điểm đến</a></li>
+            <li><a (click)="sortBy('transport')">Loại xe</a></li>
+            <li><a (click)="sortBy('start_date')">Thời gian khởi hành</a></li>
+            <li><a (click)="sortBy('created_date')">Thời gian tạo</a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- /.paap-header -->
+      <paap-item class="paap-item" [ngClass]="{'last': i === listPaaps.length - 1}" *ngFor="let paap of listPaaps; let i = index" [paap]="paap"></paap-item>
+      <!-- /.paap-item -->
+      <div class="readmore" *ngIf="visibleReadmore">
+        <a (click)="loadPaaps($event)">Xem thêm (10 PAAP khác)</a>
+      </div>
+      <!-- /.readmore -->
+    </div>
+    <!-- /.list-paaps -->
+  </div>
+</div>
+<!-- /.main -->

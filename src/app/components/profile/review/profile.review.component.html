@@ -1,0 +1,30 @@
+<div class="alert alert-info" *ngIf="!listReviews">Đang tải...</div>
+<ng-container *ngIf="listReviews">
+  <ng-container *ngIf="listReviews.length === 0">
+    Chưa có đánh giá nào.
+  </ng-container>
+  <div class="list-review">
+    <div class="review-item" *ngFor="let review of listReviews">
+      <div class="media">
+        <div class="media-left">
+          <img src="{{review.user_data.avatar}}" alt="img"/>
+          <h5>{{review.user_data.fullname}}</h5>
+        </div>
+        <div class="media-body">
+          <div class="review-rating" [innerHTML]="renderRating(review['rating'])">
+          </div>
+          <div class="review-location">
+            <h4>{{review.arrival_info}}</h4>
+            <img src="assets/images/arrow-icon-3.png" alt="img"/>
+            <h4>{{review.departure_info}}</h4>
+          </div>
+          <div class="review-content">
+            <p>{{review['content']}}</p>
+          </div>
+          <div class="review-created">Ngày đăng {{review.created_at | customDate}}</div>
+          <div class="review-transport">Phương tiện: {{review.transport_info}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

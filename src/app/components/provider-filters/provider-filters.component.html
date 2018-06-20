@@ -1,0 +1,20 @@
+<div class="provider-filters">
+  <h2>Tìm ngay nhà xe phù hợp với nhu cầu của bạn</h2>
+  <form novalidate>
+    <div class="form-group">
+      <div class="row">
+        <div class="col-sm-10">
+          <input [(ngModel)]="filterName" name="filterName" class="custom-input" type="text" placeholder="Tên nhà xe"
+                 required/>
+        </div>
+        <div class="col-sm-2 hidden-xs">
+          <button (click)="submitFilter()" class="search-btn" [disabled]="filterName == ''">TÌM NHÀ XE</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-group visible-xs">
+      <button (click)="submitFilter()" class="search-btn" [disabled]="filterName == ''">TÌM NHÀ XE</button>
+    </div>
+  </form>
+</div>
+<!-- /.provider-filters -->

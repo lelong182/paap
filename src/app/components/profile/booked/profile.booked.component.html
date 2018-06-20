@@ -1,0 +1,188 @@
+<script src="profile.booked.component.ts"></script>
+<div class="alert alert-info" *ngIf="!listTickets">Đang tải...</div>
+<ng-container *ngIf="listTickets">
+  <ng-container *ngIf="listTickets.length === 0">
+    Hiện tại chưa có ticket nào được đặt.
+  </ng-container>
+  <div class="list-booked">
+    <div class="paap-item" *ngFor="let ticket of listTickets">
+      <div class="paap-location">
+        <h4>{{ticket['arrival_address']}}</h4>
+        <img src="assets/images/arrow-icon-3.png" alt="img"/>
+        <h4>{{ticket['departure_address']}}</h4>
+        <h5><a [routerLink]="['/provider-details', ticket.provider_id]">{{ticket['provider_name']}}</a></h5>
+      </div>
+      <div class="paap-info">
+        <div class="paap-text">{{ticket['arrival_datetime'] | customDate}}</div>
+      </div>
+      <div class="paap-info">
+        <div class="paap-text">{{ticket['transport_name']}}</div>
+        <ng-container *ngIf="ticket.status === 'Active'">
+          <div class="paap-status green-2-label">Đang mở</div>
+        </ng-container>
+        <ng-container *ngIf="ticket.status === 'Processing'">
+          <div class="paap-status blue-label">Đang xử lý</div>
+        </ng-container>
+        <ng-container *ngIf="ticket.status === 'Confirmed'">
+          <div class="paap-status orange-label">Đã xác nhận</div>
+        </ng-container>
+        <ng-container *ngIf="ticket.status === 'InActive'">
+          <div class="paap-status red-label">Đã đóng</div>
+        </ng-container>
+        <div class="price" *ngIf="ticket.price && ticket.price > 0">{{ticket.price | customNumber}} VNĐ</div>
+      </div>
+      <a class="update-btn" (click)="openTicketModal(ticket)">Cập nhật thông tin</a>
+      <div id="ticket-{{ticket.id}}-modal" class="modal fade ticket-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-header">
+            <h3>Thay đổi thông tin xe đã đặt</h3>
+          </div>
+          <div class="modal-content">
+            <form novalidate #updateTicketForm="ngForm">
+              <div class="row">
+                <div class="col-sm-3"><h4>Quãng đường*</h4></div>
+                <div class="col-sm-4 col-xs-6">
+                  <div class="wrap-search-location">
+                    <div class="input-has-icon">
+                      <input #arrivalInput #arrival="ngModel" [(ngModel)]="ticketData.departureAddress" name="arrival" class="custom-input arrival-input" (keydown)="onKeydownArrival()" (blur)="onBlurArrival()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm khởi hành" required />
+                      <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+                    </div>
+                  </div>
+                  <div [hidden]="arrival.valid || (arrival.pristine && !updateTicketForm.submitted)" class="error-message submit-message-arrival">
+                    Vui lòng chọn điểm khởi hành
+                  </div>
+                  <div class="error-message blur-message-arrival hidden"></div>
+                </div>
+                <div class="col-sm-1 hidden-xs text-center">
+                  <img class="mgt-15" src="assets/images/arrow-icon-2.png" alt="img" />
+                </div>
+                <div class="col-sm-4 col-xs-6">
+                  <div class="wrap-search-location">
+                    <div class="input-has-icon">
+                      <input #departureInput #departure="ngModel" [(ngModel)]="ticketData.destinationAddress" name="departure" class="custom-input departure-input" (keydown)="onKeydownDeparture()" (blur)="onBlurDeparture()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm đến" required />
+                      <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+                    </div>
+                  </div>
+                  <div [hidden]="departure.valid || (departure.pristine && !updateTicketForm.submitted)" class="error-message submit-message-departure">
+                    Vui lòng chọn điểm đến
+                  </div>
+                  <div class="error-message blur-message-departure hidden"></div>
+                </div>
+                <div class="col-sm-4 col-sm-offset-3 col-xs-6 mgt-10">
+                  <input [(ngModel)]="ticketData.departureName" name="arrivalLabel" class="custom-input" type="text" placeholder="Mô tả điểm khởi hành (tên bến xe,...)" />
+                </div>
+                <div class="col-sm-4 col-sm-offset-1 col-xs-6 mgt-10">
+                  <input [(ngModel)]="ticketData.destinationName" name="departureLabel" class="custom-input" type="text" placeholder="Mô tả điểm đến (tên bến xe, tên địa điểm,...)" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3"><h4>Ngày/giờ khởi hành*</h4></div>
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                  <div class="wrap-date">
+                    <div class="wrap-datepicker">
+                      <datetime [timepicker]="false" [datepicker]="startDateOpts" (ngModelChange)="handleDateFromChange($event)" [(ngModel)]="ticketData.startDate" [ngModelOptions]="{standalone: true}"></datetime>
+                    </div>
+                  </div>
+                  <div class="wrap-time">
+                    <div class="wrap-datepicker">
+                      <datetime [datepicker]="false" [timepicker]="timeOpts" [(ngModel)]="ticketData.startTime" [ngModelOptions]="{standalone: true}"></datetime>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-2 text-right">
+                  <h4>Trạng thái</h4>
+                </div>
+                <div class="col-sm-3">
+                  <select2 [data]="ticketStatus" [value]="ticket.status" [width]="'100%'" (valueChanged)="select2StatusChanged($event)" [options]="statusSelect2Options"></select2>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3"><h4>Ngày/giờ đến (dự kiến)</h4></div>
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                  <div class="wrap-date">
+                    <div class="wrap-datepicker">
+                      <datetime [timepicker]="false" [datepicker]="endDateOpts" [(ngModel)]="ticketData.endDate" [ngModelOptions]="{standalone: true}"></datetime>
+                    </div>
+                  </div>
+                  <div class="wrap-time">
+                    <div class="wrap-datepicker">
+                      <datetime [datepicker]="false" [timepicker]="timeOpts" [(ngModel)]="ticketData.endTime" [ngModelOptions]="{standalone: true}"></datetime>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-2 text-right">
+                  <h4>Giá</h4>
+                </div>
+                <div class="col-sm-3">
+                  <div class="wrap-price">
+                    <input [(ngModel)]="ticketData.price" name="ticketPrice" class="custom-input" type="number" min="0" inputmode="numeric" pattern="[0-9]*" />
+                    <span class="currency-label">VNĐ</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3"><h4>Phương tiện*</h4></div>
+                <div class="col-sm-4">
+                  <div class="wrap-select">
+                    <select2 [data]="listTransport" [value]="ticket.transport_id" [width]="'100%'" (valueChanged)="select2Changed($event)"></select2>
+                  </div>
+                </div>
+                <div class="col-sm-2 text-right">
+                  <h4>Tài xế theo xe</h4>
+                </div>
+                <div class="col-sm-3 pdt-10">
+                  <input [(ngModel)]="ticketData.withDriver" name="withDriver" id="withDriver" type="checkbox" [value]="ticket.with_driver" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3"><h4>Mô tả</h4></div>
+                <div class="col-sm-9">
+                  <textarea class="custom-textarea" placeholder="Nhập mô tả cho chuyến đi" [(ngModel)]="ticketData.description" name="description"></textarea>
+                </div>
+              </div>
+              <div class="paap-update-footer">
+                <button type="submit" class="submit-btn" [disabled]="ticketData.departureId === '' || ticketData.destinationId === '' || ticketData.startDate == null || ticketData.startTime == null || ticketData.transportId === 0" (click)="updateTicket(ticket.id, $event)">CẬP NHẬT</button>
+                <button type="button" class="cancel-btn" (click)="cancelUpdateTicket(ticket.id)">HỦY</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade review-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-header">
+            <h3>Đánh giá nhà xe</h3>
+          </div>
+          <div class="modal-content">
+            <form novalidate #submitPreviewForm="ngForm">
+              <div class="row mgb-10">
+                <div class="col-xs-2">
+                  <div class="review-rating">
+                    <i class="fa fa-star active"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <textarea #content="ngModel" class="custom-textarea" placeholder="Viết đánh giá của bạn về nhà xe..." [(ngModel)]="reviewData.content" name="content" required></textarea>
+                  <div [hidden]="content.valid || (content.pristine && !submitPreviewForm.submitted)" class="error-message">
+                    Bạn chưa viết đánh giá
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <button type="submit" class="submit-btn" [disabled]="reviewData.content === ''" (click)="postReview($event, ticket.provider_id)">Đăng bình luận</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,52 @@
+<div class="hero parallax" [ngClass]="{'is-search': isSearchPage}">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-5 col-xs-6" [ngClass]="{'pdl-30 pdr-30': !isSearchPage}">
+            <div class="wrap-search-location">
+              <div class="input-has-icon">
+                <input #arrivalInput [value]="arrival ? arrival : ''" class="custom-input" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="ĐIỂM KHỞI HÀNH" />
+                <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-5 col-xs-6 pdr-30" [ngClass]="{'pdl-30': !isSearchPage}">
+            <div class="wrap-search-location">
+              <div class="input-has-icon">
+                <input #departureInput [value]="departure ? departure : ''" class="custom-input" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="ĐIỂM ĐẾN" />
+                <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-2 hidden-xs">
+            <button (click)="searchPaap()" class="search-btn" [disabled]="filterData.arrival_id === '' && filterData.departure_id === '' && filterData.transport_id === 0">TÌM PAAP</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-5 col-xs-6" [ngClass]="{'pdl-30 pdr-30': !isSearchPage}">
+            <div class="wrap-datepicker">
+              <datetime [timepicker]="false" [datepicker]="startDateOpts" [(ngModel)]="startDate"></datetime>
+            </div>
+          </div>
+          <div class="col-sm-5 col-xs-6 pdr-30" [ngClass]="{'pdl-30': !isSearchPage}">
+            <div class="wrap-select">
+              <select2 [data]="listTransport" [value]="filterData.transport_id" [width]="'100%'" (valueChanged)="select2Changed($event)"></select2>
+            </div>
+          </div>
+          <div class="col-sm-2 hidden-xs">
+            <button (click)="createPage()" class="create-btn">TẠO PAAP</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group visible-xs">
+        <button (click)="searchPaap()" class="search-btn mgb-5" [disabled]="filterData.arrival_id === '' && filterData.departure_id === '' && filterData.transport_id === 0">TÌM PAAP</button>
+        <button (click)="createPage()" class="create-btn">TẠO PAAP</button>
+      </div>
+    </div>
+    <!-- /.hero-inner -->
+  </div>
+</div>
+<!-- /.hero -->

@@ -1,0 +1,34 @@
+<div class="alert alert-info" *ngIf="!providerData">Đang tải...</div>
+<ng-container *ngIf="providerData">
+  <h4 class="area-caption">{{providerData.name}} hiện đang hoạt động tại các khu vực:</h4>
+
+  <div class="wrap-active-area">
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="row">
+          <div class="col-xs-4">
+            <div class="wrap-area-chk" *ngFor="let city1 of listCities | slice:0:25">
+              <input id="VN-{{city1['id']}}-chk" type="checkbox" disabled />
+              <label for="VN-{{city1['id']}}-chk">{{city1['name']}}</label>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="wrap-area-chk" *ngFor="let city2 of listCities | slice:25:50">
+              <input id="VN-{{city2['id']}}-chk" type="checkbox" disabled />
+              <label for="VN-{{city2['id']}}-chk">{{city2['name']}}</label>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="wrap-area-chk" *ngFor="let city3 of listCities | slice:50:63">
+              <input id="VN-{{city3['id']}}-chk" type="checkbox" disabled />
+              <label for="VN-{{city3['id']}}-chk">{{city3['name']}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div [inlineSVG]="'/assets/map.svg'"></div>
+      </div>
+    </div>
+  </div>
+</ng-container>

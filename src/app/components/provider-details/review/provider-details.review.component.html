@@ -1,0 +1,90 @@
+<div class="post-review" [class.hidden]="!isLogin">
+    <form novalidate #submitPreviewForm="ngForm">
+      <div class="row mgb-10">
+        <div class="col-sm-5">
+          <div class="wrap-search-location">
+            <div class="input-has-icon">
+              <input #arrivalInput #arrival="ngModel" [(ngModel)]="reviewData.departureAddress" name="arrival" class="custom-input arrival-input" (keydown)="onKeydownArrival()" (blur)="onBlurArrival()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm khởi hành" required />
+              <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+            </div>
+          </div>
+          <div [hidden]="arrival.valid || (arrival.pristine && !submitPreviewForm.submitted)" class="error-message submit-message-arrival">
+            Vui lòng chọn điểm khởi hành
+          </div>
+          <div class="error-message blur-message-arrival hidden"></div>
+        </div>
+        <div class="col-sm-5">
+          <div class="wrap-search-location">
+            <div class="input-has-icon">
+              <input #departureInput #departure="ngModel" [(ngModel)]="reviewData.destinationAddress" name="departure" class="custom-input departure-input" (keydown)="onKeydownDeparture()" (blur)="onBlurDeparture()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm đến" required />
+              <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+            </div>
+          </div>
+          <div [hidden]="departure.valid || (departure.pristine && !submitPreviewForm.submitted)" class="error-message submit-message-departure">
+            Vui lòng chọn điểm đến
+          </div>
+          <div class="error-message blur-message-departure hidden"></div>
+        </div>
+        <div class="col-sm-2">
+          <div class="review-rating">
+            <i class="fa fa-star active"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <textarea #content="ngModel" class="custom-textarea" placeholder="Viết đánh giá của bạn về nhà xe..." [(ngModel)]="reviewData.content" name="content" required></textarea>
+          <div [hidden]="content.valid || (content.pristine && !submitPreviewForm.submitted)" class="error-message">
+            Bạn chưa viết đánh giá
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="wrap-select">
+            <select2 [data]="listTransport" [width]="'100%'" (valueChanged)="select2Changed($event)"></select2>
+          </div>
+        </div>
+        <div class="col-sm-8">
+          <button type="submit" class="submit-btn" [disabled]="reviewData.departureId === '' || reviewData.destinationId === '' || reviewData.content === ''" (click)="postReview($event, submitPreviewForm)">Đăng bình luận</button>
+        </div>
+      </div>
+    </form>
+  </div>
+<!-- /.post-review -->
+<ng-container *ngIf="!isLogin">
+  <h4><a class="login-btn" [routerLink]="['/login']">Đăng nhập</a> để đánh giá nhà xe.</h4>
+</ng-container>
+<div class="alert alert-info" *ngIf="!reviews">Đang tải...</div>
+<ng-container *ngIf="reviews">
+  <div class="list-review">
+    <div class="review-item" *ngFor="let review of reviews">
+      <div class="media">
+        <div class="media-left">
+          <img src="{{review.user_data.avatar}}" alt="img"/>
+          <h5>{{review.user_data.fullname}}</h5>
+        </div>
+        <div class="media-body">
+          <div class="review-rating" [innerHTML]="renderRating(review.rating)"></div>
+          <div class="review-location">
+            <h4>{{review.arrival_info}}</h4>
+            <img src="assets/images/arrow-icon-3.png" alt="img"/>
+            <h4>{{review.departure_info}}</h4>
+          </div>
+          <div class="review-content">
+            <p>{{review.content}}</p>
+            <!--<a class="reply-btn">Trả lời</a>-->
+          </div>
+          <div class="review-created">Ngày đăng {{review.created_at | customDate}}</div>
+          <div class="review-transport">Phương tiện: {{review.transport_info}}</div>
+        </div>
+      </div>
+    </div>
+    <!-- /.review-item -->
+  </div>
+  <!-- /.list-review -->
+</ng-container>

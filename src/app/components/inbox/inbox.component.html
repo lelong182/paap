@@ -1,0 +1,79 @@
+<div class="main">
+  <div class="container">
+    <div class="paap-personal">
+      <div class="row">
+        <div class="col-lg-3 col-md-4">
+          <div class="inbox-clients">
+            <h3>{{userData.fullname}}</h3>
+            <perfect-scrollbar class="inbox-inner scroll-container">
+              <ul class="nav nav-tabs">
+                <li *ngFor="let inbox of listInboxClients" [class.active]="inbox.partnerId == inboxId">
+                  <a [routerLink]="['/inbox', inbox.partnerId]">
+                    <div class="media">
+                      <div class="media-left">
+                        <img src="{{inbox.avatar}}" alt="img"/>
+                      </div>
+                      <div class="media-body">
+                        <h4>{{inbox.fullname}}</h4>
+                        <p>{{inbox.content}}</p>
+                        <span class="time-ago">{{inbox.m_created_at_ago}}</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </perfect-scrollbar>
+          </div>
+          <!-- /.inbox-clients -->
+        </div>
+        <div class="col-lg-9 col-md-8">
+          <ul class="main-tabs">
+            <li>
+              <a [routerLink]="['/profile', {outlets: {profile: null}}]">Tài khoản</a>
+            </li>
+            <li>
+              <a [routerLink]="['/profile', {outlets: {profile: 'booked'}}]">Xe đã đặt</a>
+            </li>
+            <li>
+              <a [routerLink]="['/profile', {outlets: {profile: 'created'}}]">PAAP đã tạo</a>
+            </li>
+            <li>
+              <a [routerLink]="['/profile', {outlets: {profile: 'review'}}]">Đánh giá</a>
+            </li>
+            <li class="active">
+              <a [routerLink]="['/inbox/' + listInboxClients[0]?.partnerId]">Hộp thư</a>
+            </li>
+          </ul>
+          <div class="personal-content">
+            <div class="inbox-details">
+              <perfect-scrollbar class="chat-contents scroll-container">
+                <div class="chat-item" [ngClass]="{'client': chat.receiver === userData.id, 'host': chat.receiver !== userData.id}" *ngFor="let chat of itemsChat">
+                  <div class="media">
+                    <div class="media-left" *ngIf="chat.receiver === userData.id">
+                      <img src="{{userInbox?.avatar}}" alt="img"/>
+                      <h4>{{userInbox?.fullname}}</h4>
+                    </div>
+                    <div class="media-body">
+                      <p>{{chat.content}}</p>
+                      <span class="time-ago">{{chat.time | timeAgo | async}}</span>
+                    </div>
+                    <div class="media-right" *ngIf="chat.receiver !== userData.id">
+                      <img src="{{userData.avatar}}" alt="img"/>
+                      <h4>{{userData.fullname}}</h4>
+                    </div>
+                  </div>
+                </div>
+              </perfect-scrollbar>
+              <div class="chat-input">
+                <input (keydown)="submitChatMessage(userInbox.id, $event)" type="text" [(ngModel)]="chatContent" placeholder="Trả lời..." />
+                <button (click)="submitChatMessage(userInbox.id, $event)"><img src="assets/images/send-icon-2.png" alt="img"/></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.paap-personal -->
+  </div>
+</div>
+<!-- /.main -->

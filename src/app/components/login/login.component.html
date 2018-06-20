@@ -1,0 +1,171 @@
+<div class="main">
+  <div class="container">
+    <div class="paap-login">
+      <h3>Xin chào</h3>
+      <form class="login-form" novalidate #loginForm="ngForm" autocomplete="off">
+        <div class="input-has-icon mgb-10">
+          <img class="icon-3" src="assets/images/user-icon.png" alt="img"/>
+          <input #usernameLogin="ngModel" [(ngModel)]="loginData.usernameLogin" name="usernameLogin"
+                 class="custom-input" type="text" autocomplete="off" placeholder="Số điện thoại (hoặc Email)" required/>
+          <div [hidden]="usernameLogin.valid || (usernameLogin.pristine && !loginForm.submitted)" class="error-message">
+            Vui lòng nhập số điện thoại (hoặc Email)
+          </div>
+        </div>
+        <div class="input-has-icon mgb-10">
+          <img class="icon-3" src="assets/images/lock-icon.png" alt="img"/>
+          <input #passwordLogin="ngModel" [(ngModel)]="loginData.passwordLogin" name="passwordLogin"
+                 class="custom-input" type="password" autocomplete="off" placeholder="Mật khẩu" required/>
+          <div [hidden]="passwordLogin.valid || (passwordLogin.pristine && !loginForm.submitted)" class="error-message">
+            Vui lòng nhập mật khẩu
+          </div>
+        </div>
+        <button type="submit" class="login-btn" [disabled]="!loginForm.form.valid" (click)="login($event)">Đăng nhập
+        </button>
+        <button type="button" class="register-btn">Đăng ký</button>
+        <div class="text-right mgb-20">
+          <a class="forget-link link" [routerLink]="['/forgot-password']">Quên mật khẩu?</a>
+        </div>
+      </form>
+      <form class="register-form hidden" novalidate #registerForm="ngForm">
+        <div class="mgb-10">
+          <input #fullnameReg="ngModel" [(ngModel)]="registerData.fullnameReg" name="fullnameReg"
+                 class="custom-input mgb-10" type="text" placeholder="Họ và tên*" required/>
+          <div [hidden]="fullnameReg.valid || (fullnameReg.pristine && !registerForm.submitted)" class="error-message">
+            Vui lòng nhập họ và tên
+          </div>
+        </div>
+        <div class="mgb-10">
+          <input #phoneReg="ngModel" [(ngModel)]="registerData.phoneReg" name="phoneReg" class="custom-input"
+                 type="text" autocomplete="off" placeholder="Số điện thoại*" required/>
+          <div [hidden]="phoneReg.valid || (phoneReg.pristine && !registerForm.submitted)" class="error-message">
+            Vui lòng nhập số điện thoại
+          </div>
+        </div>
+        <div class="mgb-10">
+          <input #emailReg="ngModel" [(ngModel)]="registerData.emailReg" name="emailReg" class="custom-input"
+                 type="email" placeholder="Email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$"/>
+          <div [hidden]="emailReg.valid || (emailReg.pristine && !registerForm.submitted)" class="error-message">
+            <span *ngIf="emailReg.errors && emailReg.errors['pattern']">Email không đúng định dạng</span>
+          </div>
+        </div>
+        <div class="mgb-10">
+          <input #passwordReg="ngModel" [(ngModel)]="registerData.passwordReg" name="passwordReg"
+                 validateEqual="rePasswordReg" reverse="true" class="custom-input" type="password"
+                 placeholder="Mật khẩu*" minlength="6" required/>
+          <div [hidden]="passwordReg.valid || (passwordReg.pristine && !registerForm.submitted)" class="error-message">
+            <span *ngIf="passwordReg.errors && passwordReg.errors['required']">Vui lòng nhập mật khẩu</span>
+            <span *ngIf="passwordReg.errors && passwordReg.errors['minlength']">Mật khẩu tối thiểu 6 ký tự</span>
+          </div>
+        </div>
+        <div class="mgb-20">
+          <input #rePasswordReg="ngModel" [(ngModel)]="registerData.rePasswordReg" name="rePasswordReg"
+                 validateEqual="passwordReg" class="custom-input" type="password" placeholder="Nhập lại mật khẩu*"
+                 required/>
+          <div [hidden]="rePasswordReg.valid || (rePasswordReg.pristine && !registerForm.submitted)"
+               class="error-message">
+          <span
+            *ngIf="rePasswordReg.errors && rePasswordReg.errors['required'] && !rePasswordReg.errors['validateEqual']">
+              Vui lòng nhập lại mật khẩu
+          </span>
+            <span
+              *ngIf="rePasswordReg.errors && !rePasswordReg.errors['required'] && !rePasswordReg.errors['validateEqual']">
+              Nhập lại mật khẩu không trùng với mật khẩu
+          </span>
+          </div>
+        </div>
+        <h4>Phần dành cho doanh nghiệp</h4>
+        <div class="mgb-10">
+          <input #companyNameReg="ngModel" [(ngModel)]="registerData.companyNameReg" name="companyNameReg" class="custom-input" type="text" placeholder="Tên công ty" />
+        </div>
+        <div class="mgb-20">
+          <input #mstReg="ngModel" [(ngModel)]="registerData.mstReg" name="mstReg" class="custom-input" type="text" placeholder="Mã số thuế" />
+        </div>
+        <input [(ngModel)]="registerData.privacyReg" name="privacyReg" id="privacy" type="checkbox" [value]="true"
+               required/>
+        <label for="privacy">Tôi đã đọc và đồng ý với các <a data-toggle="modal" data-target=".privacy-modal">điều khoản
+          sử dụng</a></label>
+        <button type="submit" class="register-btn" [disabled]="!registerForm.form.valid" (click)="register($event)">
+          Đăng ký
+        </button>
+        <div class="text-right">
+          <a class="back-link link">Quay lại đăng nhập</a>
+        </div>
+      </form>
+      <div class="modal fade verify-modal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <img data-dismiss="modal" class="close-icon" src="assets/images/close-icon-3.png" alt="img"/>
+              <h3>Xác nhận số điện thoại</h3>
+            </div>
+            <div class="modal-body">
+              <form novalidate #verifyForm="ngForm">
+                <input #verifyCode="ngModel" [(ngModel)]="registerData.verifyCode" name="verifyCode"
+                       class="custom-input mgb-10" type="text" placeholder="Nhập mã xác nhận*" required/>
+                <div [hidden]="verifyCode.valid || (verifyCode.pristine && !verifyForm.submitted)"
+                     class="error-message">
+                  Vui lòng nhập mã xác nhận
+                </div>
+                <button type="submit" class="submit-btn" [disabled]="!verifyForm.form.valid" (click)="register($event)">
+                  Xác nhận
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade privacy-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <img data-dismiss="modal" class="close-icon" src="assets/images/close-icon-3.png" alt="img"/>
+              <h3>Điểu khoản sử dụng</h3>
+            </div>
+            <perfect-scrollbar class="modal-body scroll-container">
+              <h3>QUY ĐỊNH VỀ VIỆC SỬ DỤNG DỊCH VỤ</h3>
+              <h4>I. Quy định chung:</h4>
+              <p>I.1. Quy định này đặt ra các điều khoản và điều kiện sử dụng dịch vụ chia sẻ thông tin, hỗ trợ vận tải
+                mà chúng tôi - PAAP.VN cung cấp.</p>
+              <p>I.2. PAAP.VN là dịch vụ trực tuyến cá nhân, không mang tính chất pháp lý của công ty hay tổ chức.</p>
+              <p>I.3. Sử dụng bất kỳ dịch vụ nào của PAAP.VN, đồng nghĩa với việc người dùng chấp nhận tất cả các điều
+                khoản và điều kiện mà Quy định này đưa ra.</p>
+              <p>I.4. Trong trường hợp không đồng ý với các điều khoản và điều kiện của Quy định, người dùng có quyền
+                không thực hiện bất kỳ dịch vụ nào mà PAAP.VN cung cấp.</p>
+              <br/>
+              <h4>II. Quy tắc của dịch vụ:</h4>
+              <p>II.1. PAAP.VN cung cấp cho khách hàng dịch vụ chia sẻ thông tin nhu cầu vận chuyển, kết nối doanh
+                nghiệp cung cấp dịch vụ vận tải và người có nhu cầu sử dụng dịch vụ vận tải.</p>
+              <p>II.2. PAAP.VN không chịu trách nhiệm đối với bất kỳ tổn thất nào do nhầm lẫn, sai lệch, không chính xác
+                mà người dùng gây ra trong quá trình sử dụng dịch vụ.</p>
+              <p>II.3. PAAP.VN cung cấp hạ tầng chia sẻ thông tin và hỗ trợ kết nối người dùng với doanh nghiệp vận tải.
+                Chi tiết các giao dịch và trách nhiệm của các bên là thoả thuận riêng giữa người dùng và doanh nghiệp
+                vận tải. Chúng tôi không chịu bất kỳ trách nhiệm nào nếu các bên có xảy ra tranh chấp, khiếu nại.</p>
+              <br/>
+              <h4>III. Điều khoản và điều kiện sử dụng:</h4>
+              <p>III.1. Không được sử dụng các dịch vụ của PAAP.VN cho các hoạt động gian lận, lừa đảo, phá hoại đối với
+                các cá nhân, tổ chức.</p>
+              <p>III.2. PAAP.VN có quyền từ chối cung cấp dịch vụ cho bất kỳ người nào đang bị khiếu nại liên quan tới
+                pháp luật.</p>
+              <br/>
+              <h4>IV. Quy định về phí sử dụng dịch vụ:</h4>
+              <p>IV.1 Tất cả các dịch vụ cung cấp bởi PAAP.VN hiện tại là dịch vụ miễn phí. Nếu có phát sinh chi phí PAAP.VN có trách nhiệm thông báo trước cho các bên liên quan bằng văn bản, hợp đồng có xác nhận của cơ quan có thẩm quyền.</p>
+              <br />
+              <h4>V. Bảo mật:</h4>
+              <div>
+                <p>V.1. Tất cả các thông tin (e-mail, số điện thoại...) được đưa ra bởi khách hàng trong quá trình thực hiện giao dịch được bảo mật và không được tiết lộ cho bất kỳ bên thứ ba, trừ khi:</p>
+                <ul>
+                  <li>Là yêu cầu của cơ quan pháp luật phù hợp</li>
+                  <li>Quyết định của tòa án</li>
+                </ul>
+              </div>
+              <p>PAAP.VN có quyền thay đổi bổ sung các điều khoản và điều kiện của Quy định bất kì lúc nào mà không cần phải báo trước.</p>
+              <br />
+            </perfect-scrollbar>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.paap-login -->
+  </div>
+</div>
+<!-- /.main -->

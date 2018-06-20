@@ -1,0 +1,41 @@
+<div class="hero style-2 parallax">
+  <div class="container">
+    <div class="hero-inner">
+      <h2>Tìm ngay nhà xe phù hợp với nhu cầu của bạn</h2>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-3 mgb-5-xs">
+            <input [(ngModel)]="filterData.name" name="filterName" class="custom-input" type="text" placeholder="Tên nhà xe" required />
+          </div>
+          <div class="col-sm-4 mgb-5-xs">
+            <div class="wrap-search-location" #wrapDeparture>
+              <div class="input-has-icon">
+                <input #departureInput [(ngModel)]="departure" class="custom-input" type="text" autocomplete="off" placeholder="ĐIỂM ĐẾN" />
+                <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+              </div>
+              <div class="list-location" [ngClass]="{'open': isOpenedDeparture}">
+                <perfect-scrollbar class="list-location-inner scroll-container">
+                  <ul>
+                    <li class="no-result" *ngIf="(listDeparture | async)?.length === 0">Không tìm thấy địa điểm nào</li>
+                    <li class="location-item" *ngFor="let departure of listDeparture | async" (click)="selectLocation(departure, 'departure')">{{departure.address}}</li>
+                  </ul>
+                </perfect-scrollbar>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3 mgb-5-xs">
+            <select2 [data]="listTransport" [value]="filterData.transport_id" [width]="'100%'" (valueChanged)="select2Changed($event)"></select2>
+          </div>
+          <div class="col-sm-2 hidden-xs">
+            <button (click)="searchProviders()" class="search-btn" [disabled]="filterData.name === '' && filterData.departure_id === 0 && filterData.transport_id === 0">TÌM NHÀ XE</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group visible-xs">
+        <button (click)="searchProviders()" class="search-btn" [disabled]="filterData.name === '' && filterData.departure_id === 0 && filterData.transport_id === 0">TÌM NHÀ XE</button>
+      </div>
+    </div>
+    <!-- /.hero-inner -->
+  </div>
+</div>
+<!-- /.hero -->

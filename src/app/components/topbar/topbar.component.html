@@ -1,0 +1,49 @@
+<div class="topbar">
+  <div class="container">
+    <h1 class="logo">
+      <a [routerLink]="['/']" title="PAAP">PAAP</a>
+    </h1>
+    <nav class="top-menu">
+      <div class="minimal-menu">
+        <ul class="menu">
+          <li routerLinkActive="current" *ngIf="isLogin && userData.role === 'Admin'">
+            <a [routerLink]="['/administration']">Quản trị</a>
+          </li>
+          <li routerLinkActive="current" *ngIf="isLogin && userData.role === 'Admin'">
+            <a [routerLink]="['/create-provider']">Tạo dịch vụ</a>
+          </li>
+          <li routerLinkActive="current" [routerLinkActiveOptions]="{exact: true}">
+            <a [routerLink]="['/']">Trang chủ</a>
+          </li>
+          <li routerLinkActive="current">
+            <a [routerLink]="['/about']">Giới thiệu</a>
+          </li>
+          <li routerLinkActive="current">
+            <a [routerLink]="['/providers']">Đối tác</a>
+          </li>
+          <li routerLinkActive="current">
+            <ng-container *ngIf="isLogin">
+              <a [routerLink]="['/profile']">{{userData.fullname}}</a><span>/</span><a (click)="logout()">Thoát</a>
+            </ng-container>
+            <a *ngIf="!isLogin" [routerLink]="['/login']">Đăng nhập/Đăng ký</a>
+          </li>
+          <!--
+          <li class="lang-switch">
+            <a (click)="setLang('en')"><img src="assets/images/uk-flag.png" alt="img" /></a>
+            <a (click)="setLang('vi')"><img src="assets/images/vi-flag.png" alt="img" /></a>
+          </li>
+          -->
+        </ul>
+      </div>
+      <!-- /.minimal-menu -->
+    </nav>
+    <!-- /.top-menu -->
+    <!--
+    <div class="lang-switch-mobile visible-xs">
+      <a (click)="setLang('en')"><img src="assets/images/uk-flag.png" alt="img" /></a>
+      <a (click)="setLang('vi')"><img src="assets/images/vi-flag.png" alt="img" /></a>
+    </div>
+    -->
+  </div>
+</div>
+<!-- /.topbar -->

@@ -1,0 +1,475 @@
+<div class="main">
+  <div class="container">
+    <div class="paap-details">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="journey-info">
+            <h3>Thông tin hành trình</h3>
+            <div class="row">
+              <div class="col-sm-3"><h4>Quãng đường</h4></div>
+              <div class="col-sm-9">
+                <span class="highlight">{{paap?.departureAddress}}</span>
+                <img class="mgl-10 mgr-10" src="assets/images/arrow-icon-2.png" alt="img" />
+                <span class="highlight">{{paap?.destinationAddress}}</span>
+              </div>
+            </div>
+            <div class="row">
+              <ng-container *ngIf="paap?.departureName">
+                <div class="col-sm-6">
+                  <div class="row">
+                    <div class="col-xs-6"><h4>Điểm khởi hành</h4></div>
+                    <div class="col-xs-6"><div class="text">{{paap?.departureName}}</div></div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="paap?.destinationName">
+                <div class="col-sm-6">
+                  <div class="row">
+                    <div class="col-xs-6"><h4>Điểm đến</h4></div>
+                    <div class="col-xs-6"><div class="text">{{paap?.destinationName}}</div></div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="col-xs-6"><h4>Thời gian khởi hành</h4></div>
+                  <div class="col-xs-6">{{paap?.arrival_datetime | customDate}}</div>
+                </div>
+              </div>
+              <div class="col-sm-6" *ngIf="paap?.departure_datetime !== null">
+                <div class="row">
+                  <div class="col-xs-6"><h4>Giờ đến</h4></div>
+                  <div class="col-xs-6">{{paap?.departure_datetime | customDate}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="col-xs-6"><h4>Phương tiện</h4></div>
+                  <div class="col-xs-6">{{paap?.transport_name}}</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="col-xs-6"><h4>Tình trạng</h4></div>
+                  <div class="col-xs-6">
+                    <ng-container *ngIf="isBooked">
+                      <span class="green-label">Đã đặt xe</span>
+                    </ng-container>
+                    <ng-container *ngIf="!isBooked && paap?.status === 'Active'">
+                      <span class="green-label">Đang mở</span>
+                    </ng-container>
+                    <ng-container *ngIf="!isBooked && paap?.status === 'InActive'">
+                      <span class="red-label">Đã đóng</span>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-3"><h4>Mô tả</h4></div>
+              <div class="col-sm-9">
+                <div class="text">{{paap?.description}}</div>
+              </div>
+            </div>
+          </div>
+          <!-- /.journey-info -->
+        </div>
+        <div class="col-md-4">
+          <div class="creator">
+            <h3>Người tạo</h3>
+            <div class="media">
+              <div class="media-left">
+                <img src="{{user?.avatar}}" alt="img" />
+              </div>
+              <div class="media-body">
+                <h4>{{user?.fullname}}</h4>
+              </div>
+            </div>
+            <ng-container *ngIf="isLogin">
+              <div class="info-row">
+                <div>Số điện thoại</div>
+                <div>{{user?.phone}}</div>
+              </div>
+              <div class="info-row">
+                <div>Email</div>
+                <div>{{user?.email}}</div>
+              </div>
+              <div class="creator-btns">
+                <ng-container *ngIf="!isBooked && isOwner">
+                  <a class="update-btn" (click)="openPaapModal(paap)">CẬP NHẬT PAAP</a>
+                </ng-container>
+                <ng-container *ngIf="!isOwner">
+                  <a class="chat-btn">CHAT VỚI NGƯỜI TẠO</a>
+                </ng-container>
+                <ng-container *ngIf="isBooked && isOwner">
+                  <span class="booked-btn">ĐÃ ĐẶT XE</span>
+                </ng-container>
+                <ng-container *ngIf="!isBooked && isOwner">
+                  <a class="book-btn" (click)="openBookModal()">ĐẶT XE</a>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="!isLogin">
+              <h4 class="mgb-10">Đăng nhập ngay để xem thông tin người đặt.</h4>
+              <a class="login-btn" [routerLink]="['/login']">Đăng nhập</a>
+            </ng-container>
+          </div>
+          <!-- /.creator -->
+        </div>
+      </div>
+      <div class="modal fade book-modal" tabindex="-1" *ngIf="isLogin">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-header">
+            <h3>Đặt Xe</h3>
+          </div>
+          <div class="modal-content">
+            <ul class="nav nav-tabs book-tabs">
+              <li class="active">
+                <a href="#select-providers-tab" data-toggle="tab">
+                  <span>1</span>
+                  Chọn nhà xe
+                </a>
+              </li>
+              <li [ngClass]="{'disabled': !steps.step2}">
+                <a [attr.href]="steps.step2 ? '#confirm-info-tab' : null" [attr.data-toggle]="steps.step2 ? 'tab' : null">
+                  <span>2</span>
+                  Xác nhận thông tin
+                </a>
+              </li>
+              <li [ngClass]="{'disabled': !steps.step3}">
+                <a [attr.href]="steps.step3 ? '#finish-tab' : null" [attr.data-toggle]="steps.step3 ? 'tab' : null">
+                  <span>3</span>
+                  Hoàn tất
+                </a>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane fade in active" id="select-providers-tab">
+                <paap-provider-filters></paap-provider-filters>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-4 col-xs-6" *ngFor="let suggestions of listProviderSuggestions2">
+                    <div class="provider-item">
+                      <img (click)="goStep2(suggestions)" src="{{suggestions.avatar}}" alt="img" />
+                      <h5>{{suggestions.name}}</h5>
+                    </div>
+                  </div>
+                </div>
+                <div class="readmore" *ngIf="visibleReadmore3">
+                  <a (click)="loadSuggestions2($event)">Xem thêm (6 nhà xe khác)</a>
+                </div>
+                <!-- /.readmore -->
+              </div>
+              <div class="tab-pane fade" id="confirm-info-tab">
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="journey-info">
+                      <div class="row">
+                        <div class="col-sm-3"><h4>Quãng đường</h4></div>
+                        <div class="col-sm-9">
+                          <span class="highlight">{{paap?.departureAddress}}</span>
+                          <img class="mgl-10 mgr-10" src="assets/images/arrow-icon-2.png" alt="img" />
+                          <span class="highlight">{{paap?.destinationAddress}}</span>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <ng-container *ngIf="paap?.departureName">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <div class="col-xs-6"><h4>Điểm khởi hành</h4></div>
+                              <div class="col-xs-6">{{paap?.departureName}}</div>
+                            </div>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="paap?.destinationName">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <div class="col-xs-6"><h4>Điểm đến</h4></div>
+                              <div class="col-xs-6">{{paap?.destinationName}}</div>
+                            </div>
+                          </div>
+                        </ng-container>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <div class="col-xs-6"><h4>Thời gian khởi hành</h4></div>
+                            <div class="col-xs-6">{{paap?.arrival_datetime | customDate}}</div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6" *ngIf="paap?.departure_datetime !== null">
+                          <div class="row">
+                            <div class="col-xs-6"><h4>Giờ đến</h4></div>
+                            <div class="col-xs-6">{{paap?.departure_datetime | customDate}}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <div class="col-xs-6"><h4>Phương tiện</h4></div>
+                            <div class="col-xs-6">{{paap?.transport_name}}</div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <div class="col-xs-6"><h4>Tình trạng</h4></div>
+                            <div class="col-xs-6">
+                              <span [ngClass]="{'green-label': paap?.status === 'Active', 'red-label': paap?.status === 'InActive'}">{{paap?.status}}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3"><h4>Mô tả</h4></div>
+                        <div class="col-sm-9">{{paap?.description}}</div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm-3"><h4>Tài xế theo xe</h4></div>
+                        <div class="col-sm-9">
+                          <input [(ngModel)]="bookData.withDriver" name="withDriver" id="withDriver" type="checkbox" [value]="false" />
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /.journey-info -->
+                  </div>
+                  <div class="col-md-4">
+                    <div class="creator">
+                      <div class="info-row">
+                        <div>Họ tên</div>
+                        <div>{{user?.fullname}}</div>
+                      </div>
+                      <div class="info-row">
+                        <div>Số điện thoại</div>
+                        <div>{{user?.phone}}</div>
+                      </div>
+                      <div class="info-row">
+                        <div>Email</div>
+                        <div>{{user?.email}}</div>
+                      </div>
+                      <div class="info-row">
+                        <div>Nhà xe</div>
+                        <div>{{bookData.providerName}}</div>
+                      </div>
+                      <div class="info-row">
+                        <div>Mã giảm giá</div>
+                        <div>
+                          <input [(ngModel)]="bookData.couponCode" name="couponCode" class="custom-input" type="text" />
+                        </div>
+                      </div>
+                      <button class="next-btn mgb-15" (click)="goStep3()">Tiếp tục</button>
+                      <button class="prev-btn" (click)="goStep1()">Thay đổi nhà xe</button>
+                    </div>
+                    <!-- /.creator -->
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="finish-tab">
+                <div class="wrap-finish">
+                  <img class="icon" src="assets/images/big-check-icon.png" alt="img" />
+                  <h4 class="mgt-20 mgb-20">Đặt xe thành công</h4>
+                  <h4 class="mgb-20">Vui lòng theo dõi email và trang cá nhân để xem tình trạng của xe đã đặt</h4>
+                  <button class="back-btn mgb-40" (click)="goHomepage()">Trở về trang chủ</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="paap-{{paap?.id}}-modal" class="modal fade paap-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-header">
+            <h3>Thay đổi thông tin PAAP</h3>
+          </div>
+          <div class="modal-content">
+            <form novalidate #updatePaapForm="ngForm">
+              <div class="row">
+                <div class="col-sm-3"><h4>Quãng đường*</h4></div>
+                <div class="col-sm-4 col-xs-6">
+                  <div class="wrap-search-location">
+                    <div class="input-has-icon">
+                      <input #arrivalInput #arrival="ngModel" [(ngModel)]="paapData.departureAddress" name="arrival" class="custom-input arrival-input" (keydown)="onKeydownArrival()" (blur)="onBlurArrival()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm khởi hành" required />
+                      <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+                    </div>
+                  </div>
+                  <div [hidden]="arrival.valid || (arrival.pristine && !updatePaapForm.submitted)" class="error-message submit-message-arrival">
+                    Vui lòng chọn điểm khởi hành
+                  </div>
+                  <div class="error-message blur-message-arrival hidden"></div>
+                </div>
+                <div class="col-sm-1 hidden-xs text-center">
+                  <img class="mgt-15" src="assets/images/arrow-icon-2.png" alt="img" />
+                </div>
+                <div class="col-sm-4 col-xs-6">
+                  <div class="wrap-search-location">
+                    <div class="input-has-icon">
+                      <input #departureInput #departure="ngModel" [(ngModel)]="paapData.destinationAddress" name="departure" class="custom-input departure-input" (keydown)="onKeydownDeparture()" (blur)="onBlurDeparture()" type="text" autocorrect="off" autocapitalize="off" spellcheck="off" placeholder="Nhập vào điểm đến" required />
+                      <img class="icon" src="assets/images/marker-icon.png" alt="img" />
+                    </div>
+                  </div>
+                  <div [hidden]="departure.valid || (departure.pristine && !updatePaapForm.submitted)" class="error-message submit-message-departure">
+                    Vui lòng chọn điểm đến
+                  </div>
+                  <div class="error-message blur-message-departure hidden"></div>
+                </div>
+                <div class="col-sm-4 col-sm-offset-3 col-xs-6 mgt-10">
+                  <input [(ngModel)]="paapData.departureName" name="arrivalLabel" class="custom-input" type="text" placeholder="Mô tả điểm khởi hành (tên bến xe,...)" />
+                </div>
+                <div class="col-sm-4 col-sm-offset-1 col-xs-6 mgt-10">
+                  <input [(ngModel)]="paapData.destinationName" name="departureLabel" class="custom-input" type="text" placeholder="Mô tả điểm đến (tên bến xe, tên địa điểm,...)" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3"><h4>Ngày/giờ khởi hành*</h4></div>
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                  <div class="wrap-date">
+                    <div class="wrap-datepicker">
+                      <datetime [timepicker]="false" [datepicker]="startDateOpts" (ngModelChange)="handleDateFromChange($event)" [(ngModel)]="paapData.startDate" [ngModelOptions]="{standalone: true}"></datetime>
+                    </div>
+                  </div>
+                  <div class="wrap-time">
+                    <div class="wrap-datepicker">
+                      <datetime [datepicker]="false" [timepicker]="timeOpts" [(ngModel)]="paapData.startTime" [ngModelOptions]="{standalone: true}"></datetime>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-2 status-label">
+                  <h4>Trạng thái</h4>
+                </div>
+                <div class="col-sm-3">
+                  <select2 [data]="paapStatus" [value]="paapData.status" [width]="'100%'" (valueChanged)="select2StatusChanged($event)" [options]="statusSelect2Options"></select2>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3"><h4>Ngày/giờ đến (dự kiến)</h4></div>
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                  <div class="wrap-date">
+                    <div class="wrap-datepicker">
+                      <datetime [timepicker]="false" [datepicker]="endDateOpts" [(ngModel)]="paapData.endDate" [ngModelOptions]="{standalone: true}"></datetime>
+                    </div>
+                  </div>
+                  <div class="wrap-time">
+                    <div class="wrap-datepicker">
+                      <datetime [datepicker]="false" [timepicker]="timeOpts" [(ngModel)]="paapData.endTime" [ngModelOptions]="{standalone: true}"></datetime>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3"><h4>Phương tiện*</h4></div>
+                <div class="col-sm-4">
+                  <div class="wrap-select">
+                    <select2 [data]="listTransport" [value]="paapData.transportId" [width]="'100%'" (valueChanged)="select2Changed($event)"></select2>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3"><h4>Mô tả</h4></div>
+                <div class="col-sm-9">
+                  <textarea class="custom-textarea" placeholder="Nhập mô tả cho chuyến đi" [(ngModel)]="paapData.description" name="description"></textarea>
+                </div>
+              </div>
+              <div class="paap-update-footer">
+                <button type="submit" class="submit-btn" [disabled]="paapData.departureId === '' || paapData.destinationName === '' || paapData.startDate == null || paapData.startTime == null || paapData.transportId === 0" (click)="updatePaap(paap?.id, $event)">CẬP NHẬT</button>
+                <button type="button" class="cancel-btn" (click)="cancelUpdatePaap(paap?.id)">HỦY</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <ng-container *ngIf="isLogin && !isOwner">
+        <div class="popup-chat">
+          <div class="chat-header">
+            <h3>{{user?.fullname}}</h3>
+            <ul>
+              <li><a><span class="up-icon"></span></a></li>
+              <li><a><span class="close-icon"></span></a></li>
+            </ul>
+          </div>
+          <div class="chat-box">
+            <perfect-scrollbar class="chat-contents scroll-container">
+              <div class="chat-item" [ngClass]="{'host': chat.receiver === userData.id, 'client': chat.receiver !== userData.id}" *ngFor="let chat of itemsChat">
+                <div class="media">
+                  <div class="media-left" *ngIf="chat.receiver === userData.id">
+                    <img src="{{chat.receiver !== userData.id ? userData.avatar : user?.avatar}}" alt="img"/>
+                    <h4>{{chat.receiver !== userData.id ? userData.fullname : user?.fullname}}</h4>
+                  </div>
+                  <div class="media-body">
+                    <div class="chat-message">
+                      <p>{{chat.content}}</p>
+                      <span class="time-ago">{{chat.time | timeAgo | async}}</span>
+                    </div>
+                  </div>
+                  <div class="media-right" *ngIf="chat.receiver !== userData.id">
+                    <img src="{{chat.receiver !== userData.id ? userData.avatar : user?.avatar}}" alt="img"/>
+                    <h4>{{chat.receiver !== userData.id ? userData.fullname : user?.fullname}}</h4>
+                  </div>
+                </div>
+              </div>
+            </perfect-scrollbar>
+            <div class="chat-input">
+              <input (keydown)="submitChatMessage($event)" type="text" [(ngModel)]="chatContent" placeholder="Trả lời..." />
+              <button (click)="submitChatMessage($event)"><img src="assets/images/send-icon.png" alt="img"/></button>
+            </div>
+          </div>
+        </div>
+        <!-- /.popup-chat -->
+      </ng-container>
+    </div>
+    <!-- /.paap-details -->
+    <div class="list-paaps">
+      <div class="paap-header">
+        <h3>PAAP tương tự</h3>
+      </div>
+      <!-- /.paap-header -->
+      <ng-container *ngIf="listSimilarPaaps.length > 0">
+        <paap-item class="paap-item" [ngClass]="{'last': i === listSimilarPaaps.length - 1}" *ngFor="let paap of listSimilarPaaps; let i = index" [paap]="paap"></paap-item>
+        <!-- /.paap-item -->
+      </ng-container>
+      <ng-container *ngIf="listSimilarPaaps.length === 0">
+        <p>Hiện tại không có PAAP tương tự nào.</p>
+      </ng-container>
+      <div class="readmore" *ngIf="visibleReadmore">
+        <a (click)="loadPaaps($event)">Xem thêm (4 PAAP khác)</a>
+      </div>
+      <!-- /.readmore -->
+    </div>
+    <!-- /.list-paaps -->
+    <div class="list-provider-suggestions">
+      <div class="provider-header">
+        <h3>Dịch vụ vận chuyển phù hợp</h3>
+      </div>
+      <!-- /.provider-header -->
+      <div class="provider-item" [ngClass]="{'last': i === listProviderSuggestions.length - 1}" *ngFor="let suggestions of listProviderSuggestions; let i = index">
+        <div class="provider-name">
+          <h4><a [routerLink]="['/provider-details', suggestions.id]">{{suggestions.name}}</a></h4>
+          <div>{{suggestions.excerpt}}</div>
+        </div>
+        <!--<div class="provider-route">-->
+          <!--<h4>8:00 SA - 12:00 CH</h4>-->
+          <!--<span>Bến xe Miền Đông - Đà Lạt</span>-->
+        <!--</div>-->
+        <div class="provider-discount">
+          <div class="discount">
+            <span class="discount-number">10%<br />off</span>
+            <span class="discount-text">Giảm ngay 10% khi đặt vé qua PAAP<br /><small>Chỉ áp dụng với các vé trong tháng 5</small></span>
+          </div>
+        </div>
+        <div class="provider-details-link" *ngIf="!isBooked && isOwner">
+          <a (click)="openBookModal2(suggestions)">Đặt xe</a>
+        </div>
+      </div>
+      <!-- /.provider-item -->
+      <div class="readmore" *ngIf="visibleReadmore2">
+        <a (click)="loadSuggestions($event)">Xem thêm (4 gợi ý khác)</a>
+      </div>
+      <!-- /.readmore -->
+    </div>
+    <!-- /.list-provider-suggestions -->
+  </div>
+</div>
+<!-- /.main -->

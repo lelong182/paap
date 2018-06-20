@@ -1,0 +1,68 @@
+<div class="main">
+  <div class="container">
+    <div class="paap-personal">
+
+      <div class="row">
+        <div class="col-lg-3 col-md-4">
+          <div class="info-box">
+            <div class="wrap-avatar">
+              <img class="avatar" src="{{userData.avatar}}" alt="img"/>
+              <label for="avatar-input"></label>
+              <input id="avatar-input" ng2FileSelect [uploader]="uploader" (change)="avatarChanged($event)" type="file" />
+            </div>
+            <h3>
+              <ng-container *ngIf="userData.role === 'Agent'">
+                <a [routerLink]="['/create-provider', userData.providerId]">{{userData.fullname}}</a>
+              </ng-container>
+              <ng-container *ngIf="userData.role === 'Member'">
+                {{userData.fullname}}
+              </ng-container>
+            </h3>
+            <p>{{userData.phone}}</p>
+            <p>{{userData.email}}</p>
+            <p *ngIf="userData.role === 'Agent'"><a [routerLink]="['/create-provider', userData.providerId]">Cập nhật thông tin</a></p>
+            <ul class="footer-box">
+              <li>
+                <img src="assets/images/comment-icon.png" alt="img"/>
+                {{userStatistic?.reviews}}
+              </li>
+              <li>
+                <img src="assets/images/tag-icon.png" alt="img"/>
+                {{userStatistic?.paaps}}
+              </li>
+              <li>
+                <img src="assets/images/bus-icon.png" alt="img"/>
+                {{userStatistic?.tickets}}
+              </li>
+            </ul>
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <div class="col-lg-9 col-md-8">
+          <ul class="main-tabs">
+            <li routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              <a [routerLink]="['/profile', {outlets: {profile: null}}]">Tài khoản</a>
+            </li>
+            <li routerLinkActive="active">
+              <a [routerLink]="['/profile', {outlets: {profile: 'booked'}}]">Xe đã đặt</a>
+            </li>
+            <li routerLinkActive="active">
+              <a [routerLink]="['/profile', {outlets: {profile: 'created'}}]">PAAP đã tạo</a>
+            </li>
+            <li routerLinkActive="active">
+              <a [routerLink]="['/profile', {outlets: {profile: 'review'}}]">Đánh giá</a>
+            </li>
+            <li *ngIf="listInboxClients.length > 0">
+              <a [routerLink]="['/inbox/' + listInboxClients[0].partnerId]">Hộp thư</a>
+            </li>
+          </ul>
+          <div class="personal-content">
+            <router-outlet name="profile"></router-outlet>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.paap-personal -->
+  </div>
+</div>
+<!-- /.main -->

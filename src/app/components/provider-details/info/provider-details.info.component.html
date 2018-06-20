@@ -1,0 +1,19 @@
+<div class="alert alert-info" *ngIf="!providerData">Đang tải...</div>
+<ng-container *ngIf="providerData">
+  <div [innerHTML]="providerData?.description"></div>
+  <h4>Các loại phương tiện</h4>
+  <table class="list-vehicles">
+    <thead>
+    <tr>
+      <td style="width: 150px;">Loại xe</td>
+      <td style="width: 250px;">Thông tin xe</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let transport of providerData?.transports">
+      <td>{{transport.name}}</td>
+      <td>{{transport.description}}</td>
+    </tr>
+    </tbody>
+  </table>
+</ng-container>
