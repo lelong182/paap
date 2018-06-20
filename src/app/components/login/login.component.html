@@ -75,10 +75,12 @@
         </div>
         <h4>Phần dành cho doanh nghiệp</h4>
         <div class="mgb-10">
-          <input #companyNameReg="ngModel" [(ngModel)]="registerData.companyNameReg" name="companyNameReg" class="custom-input" type="text" placeholder="Tên công ty" />
+          <input #companyNameReg="ngModel" [(ngModel)]="registerData.companyNameReg" name="companyNameReg"
+                 class="custom-input" type="text" placeholder="Tên công ty"/>
         </div>
         <div class="mgb-20">
-          <input #mstReg="ngModel" [(ngModel)]="registerData.mstReg" name="mstReg" class="custom-input" type="text" placeholder="Mã số thuế" />
+          <input #mstReg="ngModel" [(ngModel)]="registerData.mstReg" name="mstReg" class="custom-input" type="text"
+                 placeholder="Mã số thuế"/>
         </div>
         <input [(ngModel)]="registerData.privacyReg" name="privacyReg" id="privacy" type="checkbox" [value]="true"
                required/>
@@ -122,44 +124,7 @@
               <h3>Điểu khoản sử dụng</h3>
             </div>
             <perfect-scrollbar class="modal-body scroll-container">
-              <h3>QUY ĐỊNH VỀ VIỆC SỬ DỤNG DỊCH VỤ</h3>
-              <h4>I. Quy định chung:</h4>
-              <p>I.1. Quy định này đặt ra các điều khoản và điều kiện sử dụng dịch vụ chia sẻ thông tin, hỗ trợ vận tải
-                mà chúng tôi - PAAP.VN cung cấp.</p>
-              <p>I.2. PAAP.VN là dịch vụ trực tuyến cá nhân, không mang tính chất pháp lý của công ty hay tổ chức.</p>
-              <p>I.3. Sử dụng bất kỳ dịch vụ nào của PAAP.VN, đồng nghĩa với việc người dùng chấp nhận tất cả các điều
-                khoản và điều kiện mà Quy định này đưa ra.</p>
-              <p>I.4. Trong trường hợp không đồng ý với các điều khoản và điều kiện của Quy định, người dùng có quyền
-                không thực hiện bất kỳ dịch vụ nào mà PAAP.VN cung cấp.</p>
-              <br/>
-              <h4>II. Quy tắc của dịch vụ:</h4>
-              <p>II.1. PAAP.VN cung cấp cho khách hàng dịch vụ chia sẻ thông tin nhu cầu vận chuyển, kết nối doanh
-                nghiệp cung cấp dịch vụ vận tải và người có nhu cầu sử dụng dịch vụ vận tải.</p>
-              <p>II.2. PAAP.VN không chịu trách nhiệm đối với bất kỳ tổn thất nào do nhầm lẫn, sai lệch, không chính xác
-                mà người dùng gây ra trong quá trình sử dụng dịch vụ.</p>
-              <p>II.3. PAAP.VN cung cấp hạ tầng chia sẻ thông tin và hỗ trợ kết nối người dùng với doanh nghiệp vận tải.
-                Chi tiết các giao dịch và trách nhiệm của các bên là thoả thuận riêng giữa người dùng và doanh nghiệp
-                vận tải. Chúng tôi không chịu bất kỳ trách nhiệm nào nếu các bên có xảy ra tranh chấp, khiếu nại.</p>
-              <br/>
-              <h4>III. Điều khoản và điều kiện sử dụng:</h4>
-              <p>III.1. Không được sử dụng các dịch vụ của PAAP.VN cho các hoạt động gian lận, lừa đảo, phá hoại đối với
-                các cá nhân, tổ chức.</p>
-              <p>III.2. PAAP.VN có quyền từ chối cung cấp dịch vụ cho bất kỳ người nào đang bị khiếu nại liên quan tới
-                pháp luật.</p>
-              <br/>
-              <h4>IV. Quy định về phí sử dụng dịch vụ:</h4>
-              <p>IV.1 Tất cả các dịch vụ cung cấp bởi PAAP.VN hiện tại là dịch vụ miễn phí. Nếu có phát sinh chi phí PAAP.VN có trách nhiệm thông báo trước cho các bên liên quan bằng văn bản, hợp đồng có xác nhận của cơ quan có thẩm quyền.</p>
-              <br />
-              <h4>V. Bảo mật:</h4>
-              <div>
-                <p>V.1. Tất cả các thông tin (e-mail, số điện thoại...) được đưa ra bởi khách hàng trong quá trình thực hiện giao dịch được bảo mật và không được tiết lộ cho bất kỳ bên thứ ba, trừ khi:</p>
-                <ul>
-                  <li>Là yêu cầu của cơ quan pháp luật phù hợp</li>
-                  <li>Quyết định của tòa án</li>
-                </ul>
-              </div>
-              <p>PAAP.VN có quyền thay đổi bổ sung các điều khoản và điều kiện của Quy định bất kì lúc nào mà không cần phải báo trước.</p>
-              <br />
+              <div [innerHTML]="temrsContent"></div>
             </perfect-scrollbar>
           </div>
         </div>

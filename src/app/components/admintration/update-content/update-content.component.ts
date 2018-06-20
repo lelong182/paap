@@ -37,10 +37,8 @@ export class UpdateContentComponent implements OnInit {
 
   ngOnInit() {
     const self = this;
-    console.log(self.contentType);
     self.paapService.getContent(self.contentType).subscribe(
       res => {
-        console.log(res);
         if (res.success) {
           self.content = res.data['value'];
         }
@@ -58,7 +56,21 @@ export class UpdateContentComponent implements OnInit {
     self.paapService.updateContent(self.contentType, {value: self.content}).subscribe(
       res => {
         if (res.success) {
-          console.log(res);
+          window.swal({
+            title: 'Thông báo',
+            text: 'Cập nhật nội dung thành công',
+            padding: 0,
+            customClass: 'paap-swal',
+            allowOutsideClick: false,
+            showCloseButton: false
+          }).then(function () {
+            if (self.contentType === 'about') {
+              self.router.navigate(['/about']);
+            }
+            if (self.contentType === 'terms') {
+              self.router.navigate(['/login']);
+            }
+          });
         }
       },
       err => {
@@ -72,5 +84,4 @@ export class UpdateContentComponent implements OnInit {
   backToAdmin() {
     this.router.navigate(['/administration']);
   }
-
 }

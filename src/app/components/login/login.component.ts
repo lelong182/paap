@@ -1,17 +1,18 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Title} from '@angular/platform-browser';
 import {LocalStorageService} from 'angular-2-local-storage';
 import {UserService} from '../../services/user.service';
 import {AppService} from '../../services/app.service';
 import {UserModel} from '../../models/user-model';
+import {PaapService} from '../../services/paap.service';
 
 declare let $, window;
 
 @Component({
   templateUrl: './login.component.html'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   loginData = {
     usernameLogin: '',
@@ -28,13 +29,22 @@ export class LoginComponent {
     privacyReg: false,
     verifyCode: ''
   };
+  temrsContent: string;
 
   constructor(private title: Title,
               private router: Router,
               private appService: AppService,
               private localStorageService: LocalStorageService,
+              private paapService: PaapService,
               private userService: UserService) {
     title.setTitle('PAAP | Đăng nhập');
+  }
+
+  ngOnInit() {
+    const self = this;
+    self.paapService.getContent('terms').subscribe(res => {
+      self.temrsContent = res.data['value'];
+    });
   }
 
   login(event) {

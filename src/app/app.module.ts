@@ -69,7 +69,6 @@ import {PerfectScrollbarConfigInterface} from 'ngx-perfect-scrollbar';
 import {AdmintrationComponent} from './components/admintration/admintration.component';
 import {CreateTransportComponent} from './components/admintration/create-transport/create-transport.component';
 import {UpdateContentComponent} from './components/admintration/update-content/update-content.component';
-
 import {AgmCoreModule} from '@agm/core';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -128,13 +127,6 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     CommonModule,
     BrowserAnimationsModule,
     BrowserModule,
-    AgmCoreModule.forRoot({
-      // apiKey: 'AIzaSyAan_afG43VJGdVMB2adS99Q-ALFnxtpL0',
-      apiKey: 'AIzaSyD8vIefBmxHoIEYZ99U1gBUKxV5D5t3wiA',
-      libraries: ['places'],
-      region: 'VN',
-      language: 'vi'
-    }),
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
@@ -154,6 +146,12 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FroalaEditorModule.forRoot(),
     FroalaViewModule.forRoot(),
     PerfectScrollbarModule,
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyD8vIefBmxHoIEYZ99U1gBUKxV5D5t3wiA',
+      libraries: ['places'],
+      region: 'VN',
+      language: 'vi'
+    })
   ],
   providers: [
     AppService,
@@ -170,4 +168,5 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   bootstrap: [AppComponent]
 })
 
-export class AppModule {}
+export class AppModule {
+}

@@ -23,7 +23,8 @@ import * as _ from 'lodash';
 declare let $, window, google;
 
 @Component({
-  templateUrl: './details.component.html'
+  templateUrl: './details.component.html',
+  styleUrls: ['details.component.css']
 })
 export class DetailsComponent implements OnInit, OnDestroy {
 
